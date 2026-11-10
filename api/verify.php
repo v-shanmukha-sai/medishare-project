@@ -39,6 +39,11 @@ $st = $pdo->query("SELECT u.id, u.name, u.role, u.org_type, u.created_at, u.emai
                    LEFT JOIN distributors d ON d.user_id = u.id
                    LEFT JOIN ngos n ON n.user_id = u.id
                    WHERE u.verified = 0 AND u.role <> 'admin' ORDER BY u.id");
-$out = ['ok' => true, 'pending' => $st->fetchAll()];
+$pending = $st->fetchAll();
+foreach ($pending as &$p) {
+  $p['license_image'] = storage_document_url($p['license_image'], $p['role']);
+}
+unset($p);
+$out = ['ok' => true, 'pending' => $pending];
 cache_put('verify:pending', $out);
 respond($out);

@@ -37,12 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $image = null;
   if (!empty($_FILES['image']['name'])) {
     $f = $_FILES['image'];
-    if ($f['error'] !== UPLOAD_ERR_OK) respond(['ok' => false, 'error' => 'Image upload failed.'], 422);
-    if ($f['size'] > 2 * 1024 * 1024) respond(['ok' => false, 'error' => 'Image must be under 2MB.'], 422);
-    $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
-    if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) respond(['ok' => false, 'error' => 'Only JPG/PNG/WEBP allowed.'], 422);
-    $image = 'uploads/medicines/' . bin2hex(random_bytes(8)) . '.' . $ext;
-    if (!move_uploaded_file($f['tmp_name'], __DIR__ . '/../' . $image)) respond(['ok' => false, 'error' => 'Image save failed.'], 500);
+    [$ext, $mime, $err] = upload_validate($f, ['jpg', 'jpeg', 'png', 'webp'], 2 * 1024 * 1024);
+    if ($err) respond(['ok' => false, 'error' => $err], 422);
+    $stored = storage_store_medicine($f['tmp_name'], $ext, $mime);
+    if ($stored['error']) respond(['ok' => false, 'error' => $stored['error']], 500);
+    $image = $stored['path'];
   }
 
   if ($action === 'update') {
@@ -55,9 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                    low_stock_notified = CASE WHEN ? >= 250 THEN 0 ELSE low_stock_notified END,
                    deleted = CASE WHEN ? = 0 THEN 1 ELSE 0 END WHERE id=?')
         ->execute([$name, $cat, $price, $mrp, $stock, $batch, $image ?: $old['image'], $expiry, $stock, $stock, $id]);
-    if ($image && $old['image'] && str_starts_with($old['image'], 'uploads/medicines/')) {
-      @unlink(__DIR__ . '/../' . $old['image']);
-    }
+    if ($image && $old['image']) storage_delete_upload($old['image']);
     if ($stock === 0) {
       notify($pdo, $u['id'], 'low_stock', "Your medicine '$name' is out of stock and was removed from the store.");
     }
@@ -90,6 +87,7 @@ if (isset($_GET['id'])) {
   $m = $st->fetch();
   if (!$m) respond(['ok' => false, 'error' => 'Medicine not found.'], 404);
   $m['shelf_months'] = max(0, (int)((strtotime($m['expiry']) - time()) / 2592000));
+  $m['image'] = storage_medicine_url($m['image']);
   $out = ['ok' => true, 'medicine' => $m];
   cache_put("medicines:item:$id", $out);
   respond($out);
@@ -165,6 +163,7 @@ $medicines = $st->fetchAll();
 
 foreach ($medicines as &$m) {
   $m['shelf_months'] = max(0, (int)((strtotime($m['expiry']) - time()) / 2592000));
+  $m['image'] = storage_medicine_url($m['image']);
   $skip = ($q && !str_contains(strtolower($m['name']), $q)) || ($cat && $m['category'] !== $cat);
   if ($min && $m['shelf_months'] < $min) $skip = true;
   if ($max && $m['shelf_months'] > $max) $skip = true;

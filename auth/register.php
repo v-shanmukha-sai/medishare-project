@@ -26,27 +26,24 @@ if ($credential === '' || strlen($credential) > 60) {
   respond(['ok' => false, 'error' => 'A valid license / registration number is required (max 60 characters).'], 422);
 }
 
-/* license/registration document image (required for both roles) */
-$image = null;
-if (!empty($_FILES['license_image']['name'])) {
-  $f = $_FILES['license_image'];
-  if ($f['error'] !== UPLOAD_ERR_OK) respond(['ok' => false, 'error' => 'Image upload failed.'], 422);
-  if ($f['size'] > 2 * 1024 * 1024) respond(['ok' => false, 'error' => 'Image must be under 2MB.'], 422);
-  $ext = strtolower(pathinfo($f['name'], PATHINFO_EXTENSION));
-  if (!in_array($ext, ['jpg', 'jpeg', 'png', 'webp'], true)) respond(['ok' => false, 'error' => 'Only JPG/PNG/WEBP allowed.'], 422);
-  $dir = __DIR__ . '/../uploads/licenses/';
-  if (!is_dir($dir)) @mkdir($dir, 0755, true);
-  $image = 'uploads/licenses/' . bin2hex(random_bytes(8)) . '.' . $ext;
-  if (!move_uploaded_file($f['tmp_name'], __DIR__ . '/../' . $image)) respond(['ok' => false, 'error' => 'Image save failed.'], 500);
-} else {
-  respond(['ok' => false, 'error' => 'License / registration document image is required.'], 422);
-}
-
 $pdo = db();
 $st = $pdo->prepare('SELECT id FROM users WHERE email = ?');
 $st->execute([$email]);
 if ($st->fetch()) {
   respond(['ok' => false, 'error' => 'Email already registered.'], 409);
+}
+
+/* license/registration document image (required for both roles) */
+$image = null;
+if (!empty($_FILES['license_image']['name'])) {
+  $f = $_FILES['license_image'];
+  [$ext, $mime, $err] = upload_validate($f, ['jpg', 'jpeg', 'png', 'webp'], 2 * 1024 * 1024);
+  if ($err) respond(['ok' => false, 'error' => $err], 422);
+  $stored = storage_store_document($f['tmp_name'], $ext, $mime, $role);
+  if ($stored['error']) respond(['ok' => false, 'error' => $stored['error']], 500);
+  $image = $stored['path'];
+} else {
+  respond(['ok' => false, 'error' => 'License / registration document image is required.'], 422);
 }
 
 $pdo->beginTransaction();
@@ -72,6 +69,7 @@ try {
   $pdo->commit();
 } catch (Exception $e) {
   $pdo->rollBack();
+  if ($image) storage_delete_upload($image, $role);
   respond(['ok' => false, 'error' => 'Registration failed.'], 500);
 }
 

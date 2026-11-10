@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MediShare Project Report</title>
+<style>
+  @page { size: A4; margin: 16mm 20mm 18mm 20mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 11.5pt;
+    line-height: 1.5;
+    color: #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .page { page-break-after: always; }
+  .section + .section { page-break-before: always; }
+  .title-page {
+    height: 258mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .tp-report { margin-top: 6mm; font-size: 20pt; font-weight: bold; letter-spacing: 0.5px; }
+  .tp-title { margin-top: 3mm; font-size: 40pt; font-weight: bold; color: #1F4E79; letter-spacing: 1px; }
+  .tp-subtitle { margin-top: 2mm; font-size: 16.5pt; font-weight: bold; color: #1F4E79; }
+  .tp-guide-title { margin-top: 5mm; font-size: 14pt; font-weight: bold; }
+  .tp-rule { width: 52%; border-top: 1.6px solid #1F4E79; margin: 4mm 0 7mm; }
+  .tp-submitted { font-size: 11.5pt; line-height: 1.45; margin: 0 0 5mm; }
+  .tp-by { font-size: 13pt; font-weight: bold; color: #1F4E79; margin-bottom: 3mm; letter-spacing: 0.5px; }
+  table.team { width: 68%; border-collapse: collapse; margin: 0 auto 5mm; }
+  table.team td { padding: 1mm 0; font-size: 11.5pt; font-weight: bold; color: #1F4E79; }
+  table.team td:last-child { text-align: right; }
+  .tp-under { font-size: 11pt; margin-top: 1mm; }
+  .tp-name { font-size: 14pt; font-weight: bold; color: #1F4E79; margin-top: 0.5mm; }
+  .tp-footer { margin-top: auto; font-size: 13pt; font-weight: bold; line-height: 1.5; }
+  .tp-session { margin-top: 1.5mm; font-size: 10pt; font-weight: normal; }
+
+  .doc-title {
+    font-size: 26pt;
+    font-weight: bold;
+    text-align: center;
+    letter-spacing: 0.5px;
+    margin: 8mm 0 10mm;
+  }
+  .cert-head { text-align: center; font-size: 16pt; font-weight: bold; margin-top: 2mm; }
+  .cert-college { text-align: center; font-size: 18pt; font-weight: bold; color: #1F4E79; margin-top: 1mm; }
+  .cert-body { margin-top: 6mm; text-align: justify; }
+  table.cert-team { width: 62%; margin: 6mm auto; border-collapse: collapse; }
+  table.cert-team td { padding: 1.2mm 0; font-size: 11.5pt; font-weight: bold; }
+  .sign-row { display: flex; justify-content: space-between; margin-top: 34mm; padding: 0 4mm; }
+  .sign { width: 40%; text-align: center; }
+  .sign-line { border-top: 1.2px solid #111; margin-bottom: 2mm; }
+  .sign-role { font-weight: bold; letter-spacing: 0.4px; }
+  .team-title { text-align: center; font-size: 15pt; font-weight: bold; color: #1F4E79; margin: 10mm 0 4mm; }
+  .keywords-title { text-align: center; font-size: 14pt; font-weight: bold; color: #1F4E79; margin: 8mm 0 3mm; }
+  .keywords { text-align: center; }
+
+  h1 {
+    font-size: 18pt;
+    color: #1F4E79;
+    margin: 0 0 5mm;
+    padding-bottom: 1.5mm;
+    border-bottom: 1.4px solid #1F4E79;
+    page-break-after: avoid;
+  }
+  h2 { font-size: 13.5pt; color: #1F4E79; margin: 5mm 0 2.5mm; page-break-after: avoid; }
+  p { margin: 0 0 3mm; text-align: justify; }
+  ul, ol { margin: 0 0 4mm 6mm; padding: 0; }
+  li { margin-bottom: 1.5mm; text-align: justify; }
+  table.data { width: 100%; border-collapse: collapse; margin: 2mm 0 5mm; font-size: 10pt; }
+  table.data th { background: #E8EEF5; color: #1F4E79; border: 1px solid #9DB2C8; padding: 1.5mm; text-align: left; }
+  table.data td { border: 1px solid #B8C6D6; padding: 1.5mm; vertical-align: top; }
+  table.data tr { page-break-inside: avoid; }
+  pre {
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 9.3pt;
+    line-height: 1.35;
+    background: #F7F9FC;
+    border: 1px solid #C9D6E3;
+    padding: 3mm;
+    margin: 2mm 0 5mm;
+    white-space: pre;
+    page-break-inside: avoid;
+  }
+  .marker { font-size: 1px; color: #fff; }
+  .index-table { width: 100%; border-collapse: collapse; margin-top: 2mm; }
+  .index-table th { font-size: 12.5pt; color: #1F4E79; text-align: left; padding: 2mm 1mm; border-bottom: 1.4px solid #1F4E79; }
+  .index-table th:last-child { text-align: right; }
+  .index-table td { padding: 2.2mm 1mm; font-size: 11.5pt; border-bottom: 0.6px solid #D5DCE4; }
+  .index-table td:last-child { text-align: right; }
+  .index-table tbody tr:nth-child(odd) { background: #F2F2F2; }
+  .refs li { margin-bottom: 2mm; }
+  .small { font-size: 10.5pt; }
+</style>
+</head>
+<body>
+<!-- ================= TITLE PAGE ================= -->
+<section class="title-page">
+  <div class="tp-report">PROJECT REPORT ON</div>
+  <div class="tp-title">MEDISHARE</div>
+  <div class="tp-subtitle">MEDICINE DONATION AND DISTRIBUTION PLATFORM</div>
+  <div class="tp-guide-title">PROJECT REPORT &amp; TECHNICAL GUIDE</div>
+  <div class="tp-rule"></div>
+  <p class="tp-submitted">Submitted in partial fulfillment of the<br>requirements for the award of <strong>Diploma in</strong><br><strong>Computer Engineering.</strong></p>
+  <div class="tp-by">SUBMITTED BY</div>
+  <table class="team">
+    <tr><td>MANADI RUPA</td><td>24004-CS-098</td></tr>
+    <tr><td>DASI CHARAN KUMAR</td><td>24004-CS-080</td></tr>
+    <tr><td>VOLLALA SHANMUKHA SAI</td><td>24004-CS-117</td></tr>
+    <tr><td>BEJUGAM RAGHAVI</td><td>24004-CS-105</td></tr>
+    <tr><td>MEDIPELLI SHIVANI</td><td>24004-CS-101</td></tr>
+    <tr><td>DARAVATH BASANTHI</td><td>24004-CS-123</td></tr>
+    <tr><td>BUDDA CHAITANYA</td><td>24004-CS-068</td></tr>
+    <tr><td>NALABOLU SATWIK REDDY</td><td>24004-CS-082</td></tr>
+    <tr><td>BIJILI SAI CHARAN</td><td>24004-CS-121</td></tr>
+  </table>
+  <div class="tp-under">Under the guidance of</div>
+  <div class="tp-name">S. Ravinder, M.Tech</div>
+  <div class="tp-under">and Principal</div>
+  <div class="tp-name">P. Srinivas, M.Tech</div>
+  <div class="tp-footer">
+    <div>DEPARTMENT OF COMPUTER ENGINEERING</div>
+    <div>GOVERNMENT POLYTECHNIC WARANGAL</div>
+    <div class="tp-session">Warangal, Telangana &bull; Academic Session 2024&ndash;2027</div>
+  </div>
+</section>
+
+<!-- ================= CERTIFICATE ================= -->
+<section class="page">
+  <div class="cert-head">DEPARTMENT OF COMPUTER ENGINEERING</div>
+  <div class="cert-college">GOVERNMENT POLYTECHNIC WARANGAL</div>
+  <h1 class="doc-title">CERTIFICATE</h1>
+  <p class="cert-body">This is to certify that this project report entitled <strong>&ldquo;MEDISHARE: MEDICINE DONATION AND DISTRIBUTION PLATFORM&rdquo;</strong> is a bonafide record of the project work carried out by the students listed below, in partial fulfillment of the requirements for the award of Diploma in Computer Engineering, during the academic session 2024&ndash;2027.</p>
+  <table class="cert-team">
+    <tr><td>MANADI RUPA &mdash; 24004-CS-098</td></tr>
+    <tr><td>DASI CHARAN KUMAR &mdash; 24004-CS-080</td></tr>
+    <tr><td>VOLLALA SHANMUKHA SAI &mdash; 24004-CS-117</td></tr>
+    <tr><td>BEJUGAM RAGHAVI &mdash; 24004-CS-105</td></tr>
+    <tr><td>MEDIPELLI SHIVANI &mdash; 24004-CS-101</td></tr>
+    <tr><td>DARAVATH BASANTHI &mdash; 24004-CS-123</td></tr>
+    <tr><td>BUDDA CHAITANYA &mdash; 24004-CS-068</td></tr>
+    <tr><td>NALABOLU SATWIK REDDY &mdash; 24004-CS-082</td></tr>
+    <tr><td>BIJILI SAI CHARAN &mdash; 24004-CS-121</td></tr>
+  </table>
+  <p>The work is submitted for academic review. The system is a web application prototype; its results should be treated as an informational aid and not as a substitute for professional medical or commercial advice.</p>
+  <div class="sign-row">
+    <div class="sign">
+      <div class="sign-line"></div>
+      <div class="sign-role">PROJECT GUIDE</div>
+      <div>S. Ravinder, M.Tech</div>
+    </div>
+    <div class="sign">
+      <div class="sign-line"></div>
+      <div class="sign-role">PRINCIPAL</div>
+      <div>P. Srinivas, M.Tech</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ACKNOWLEDGEMENT ================= -->
+<section class="page">
+  <h1 class="doc-title">ACKNOWLEDGEMENT</h1>
+  <p>We express our sincere gratitude to our project guide, <strong>S. Ravinder, M.Tech</strong>, for his guidance, valuable suggestions and encouragement throughout the development of this project. His support helped us understand the technical and practical challenges involved in building a complete medicine donation and distribution platform.</p>
+  <p>We are thankful to our Principal, <strong>P. Srinivas, M.Tech</strong>, for providing the opportunity and institutional support to undertake this work. We also thank the faculty members of the Department of Computer Engineering for their assistance and feedback.</p>
+  <p>We acknowledge the open-source technologies used in the MediShare project, including PHP, PostgreSQL, Supabase, Bootstrap, Razorpay, Leaflet and Playwright. Finally, we thank our families and friends for their encouragement.</p>
+  <div class="team-title">PROJECT TEAM</div>
+  <table class="team">
+    <tr><td>MANADI RUPA</td><td>24004-CS-098</td></tr>
+    <tr><td>DASI CHARAN KUMAR</td><td>24004-CS-080</td></tr>
+    <tr><td>VOLLALA SHANMUKHA SAI</td><td>24004-CS-117</td></tr>
+    <tr><td>BEJUGAM RAGHAVI</td><td>24004-CS-105</td></tr>
+    <tr><td>MEDIPELLI SHIVANI</td><td>24004-CS-101</td></tr>
+    <tr><td>DARAVATH BASANTHI</td><td>24004-CS-123</td></tr>
+    <tr><td>BUDDA CHAITANYA</td><td>24004-CS-068</td></tr>
+    <tr><td>NALABOLU SATWIK REDDY</td><td>24004-CS-082</td></tr>
+    <tr><td>BIJILI SAI CHARAN</td><td>24004-CS-121</td></tr>
+  </table>
+</section>
+
+<!-- ================= ABSTRACT ================= -->
+<section class="page">
+  <h1 class="doc-title">ABSTRACT</h1>
+  <p>MediShare is a web-based medicine donation and distribution platform that connects verified medicine distributors and pharmacies with non-governmental organizations, medical shops, old-age homes, orphanages and charitable hospitals. A large quantity of usable medicine is wasted every year because distributors hold surplus or near-expiry stock while social organizations struggle to obtain medicines for the people they serve. MediShare addresses this gap with a single, verified marketplace.</p>
+  <p>The application provides role-based access for administrators, distributors and organizations. Distributors publish stock with batch number, expiry date, price and quantity. Organizations search the store, add medicines to a cart, choose a delivery address and pay through Razorpay (UPI, card or net banking) or cash on delivery. Every order passes through a controlled lifecycle: Pending Payment, Pending, Accepted, Packed, Shipped, Out for Delivery and Delivered. Stock is reserved when an order is placed and restored when it is cancelled or rejected. Expired and out-of-stock medicines are removed automatically and the distributor is notified.</p>
+  <p>The system is implemented with PHP 8 on Apache, PostgreSQL hosted on Supabase, Bootstrap 5 and vanilla JavaScript. It includes admin verification of documents, in-app notifications with an unread badge, reviews, reports with CSV export, audit logs, an email-OTP password-reset flow and performance optimizations for a hosted database. The platform was tested at the API and browser levels; all functional tests passed and cached read paths respond in milliseconds.</p>
+  <div class="keywords-title">KEYWORDS</div>
+  <p class="keywords">Medicine donation &bull; Medicine redistribution &bull; E-commerce &bull; Order management &bull; Razorpay &bull; Supabase &bull; PHP &bull; PostgreSQL</p>
+</section>
+
+<!-- ================= INDEX ================= -->
+<section class="page">
+  <h1 class="doc-title">INDEX</h1>
+  <table class="index-table">
+    <thead><tr><th>CONTENTS</th><th>PAGE</th></tr></thead>
+    <tbody>
+      <tr><td>Executive Summary</td><td>{{PAGE:exec}}</td></tr>
+      <tr><td>1. Introduction</td><td>{{PAGE:intro}}</td></tr>
+      <tr><td>2. Problem Statement &amp; Motivation</td><td>{{PAGE:problem}}</td></tr>
+      <tr><td>3. Project Scope &amp; Objectives</td><td>{{PAGE:scope}}</td></tr>
+      <tr><td>4. System Architecture</td><td>{{PAGE:arch}}</td></tr>
+      <tr><td>5. Technical Stack</td><td>{{PAGE:stack}}</td></tr>
+      <tr><td>6. Database Design</td><td>{{PAGE:db}}</td></tr>
+      <tr><td>7. Implementation</td><td>{{PAGE:impl}}</td></tr>
+      <tr><td>8. Order Lifecycle &amp; Payments</td><td>{{PAGE:orders}}</td></tr>
+      <tr><td>9. Security</td><td>{{PAGE:security}}</td></tr>
+      <tr><td>10. Performance Optimization</td><td>{{PAGE:perf}}</td></tr>
+      <tr><td>11. Testing &amp; Results</td><td>{{PAGE:testing}}</td></tr>
+      <tr><td>12. Limitations &amp; Future Work</td><td>{{PAGE:future}}</td></tr>
+      <tr><td>13. Conclusion &amp; References</td><td>{{PAGE:conclusion}}</td></tr>
+      <tr><td>Appendix &mdash; Setup &amp; API Reference</td><td>{{PAGE:appendix}}</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= EXECUTIVE SUMMARY ================= -->
+<section class="section">
+  <span class="marker">[[SEC:exec]]</span>
+  <h1>Executive Summary</h1>
+  <p>MediShare is a complete web application for redistributing usable medicines from verified distributors to verified social organizations. It replaces informal phone and spreadsheet coordination with a single platform that shows live stock, expiry dates, prices and order status.</p>
+  <p>The platform has three roles. Distributors manage their medicine inventory. Organizations browse the store, place orders and pay online or choose cash on delivery. Administrators verify accounts, review uploaded documents and monitor reports and audit logs.</p>
+  <p>The main outcomes of the project are:</p>
+  <ul>
+    <li>a verified network of distributors and recipient organizations;</li>
+    <li>expiry-aware inventory with automatic removal of expired and out-of-stock medicines;</li>
+    <li>an order lifecycle with stock reservation, cancellation, rejection and delivery tracking;</li>
+    <li>server-verified Razorpay payments with UPI, card and net-banking support, plus cash on delivery;</li>
+    <li>in-app notifications with an unread badge;</li>
+    <li>reviews, reports with CSV export and a complete audit trail;</li>
+    <li>an email-OTP password-reset flow;</li>
+    <li>caching and lazy database access that keep cached reads in the millisecond range.</li>
+  </ul>
+  <p>The system was validated with API tests, browser tests and a role-based smoke test. All functional checks passed.</p>
+</section>
+
+<!-- ================= 1. INTRODUCTION ================= -->
+<section class="section">
+  <span class="marker">[[SEC:intro]]</span>
+  <h1>1. Introduction</h1>
+  <h2>1.1 Background</h2>
+  <p>Medicines are essential, time-sensitive products. Distributors and pharmacies routinely carry surplus stock, and a portion of it approaches expiry before it can be sold. At the same time, NGOs, old-age homes, orphanages, charitable hospitals and small medical shops often lack the funds and supply network to obtain even basic medicines. Much of the surplus is discarded while genuine demand remains unmet.</p>
+  <p>Most redistribution today happens through phone calls, messaging applications and personal contacts. These channels do not provide verified participants, live stock information, price transparency, order tracking, payment records or an audit trail. MediShare was built to replace this informal process with a structured digital platform.</p>
+  <h2>1.2 Purpose of the Project</h2>
+  <p>The purpose of the project is to design and implement a reliable, easy-to-use platform where verified distributors can list surplus or near-expiry medicines and verified organizations can order them. The project also demonstrates a complete software development cycle: requirements, design, implementation, testing and deployment.</p>
+  <h2>1.3 Scope of the Report</h2>
+  <p>This report describes the problem, the proposed solution, the system architecture, the database design, the implementation of each module, the security and performance measures, and the testing results. Setup instructions and an API reference are included in the appendix.</p>
+</section>
+
+<!-- ================= 2. PROBLEM STATEMENT ================= -->
+<section class="section">
+  <span class="marker">[[SEC:problem]]</span>
+  <h1>2. Problem Statement &amp; Motivation</h1>
+  <p>There is no common, trustworthy platform where verified distributors can list surplus or near-expiry medicines and verified social organizations can order them. The absence of such a platform causes avoidable wastage of usable medicines, difficulty for organizations in finding suppliers, no verification of the parties involved, no record of donations, payments or deliveries, no visibility of expiry dates and stock levels, and manual, error-prone order handling.</p>
+  <p>The motivation for the project comes from three observations:</p>
+  <ul>
+    <li>medicine waste is often a logistics and visibility problem rather than a shortage of demand;</li>
+    <li>social organizations need a simple ordering experience, not a complex enterprise system;</li>
+    <li>trust is essential, so every distributor and organization must be verified before participating.</li>
+  </ul>
+  <p>MediShare addresses these issues with verified accounts, a live store, a controlled order lifecycle, online payments and an audit trail.</p>
+</section>
+
+<!-- ================= 3. SCOPE & OBJECTIVES ================= -->
+<section class="section">
+  <span class="marker">[[SEC:scope]]</span>
+  <h1>3. Project Scope &amp; Objectives</h1>
+  <h2>3.1 Objectives</h2>
+  <ol>
+    <li>Build a verified network of medicine distributors and social organizations.</li>
+    <li>Provide real-time visibility of medicine stock, price, batch number and expiry date.</li>
+    <li>Allow organizations to search, filter, order and pay for medicines online.</li>
+    <li>Track every order through a clear lifecycle with cancellation and rejection support.</li>
+    <li>Notify distributors and organizations about orders, payments, stock and expiry events.</li>
+    <li>Give administrators tools to verify documents, manage users, view reports and audit activity.</li>
+    <li>Protect accounts and business data with authentication, authorization and secure coding practices.</li>
+    <li>Keep the application responsive despite a hosted database by caching read-heavy responses.</li>
+  </ol>
+  <h2>3.2 In Scope</h2>
+  <p>Registration and document upload, admin verification, medicine inventory, store search and filters, cart, checkout, Razorpay and cash-on-delivery payments, order status management, cancellation and rejection, notifications, reviews, reports and CSV export, audit logs, profile management, a public map and password reset.</p>
+  <h2>3.3 Out of Scope</h2>
+  <p>Direct patient prescriptions, clinical advice, courier integration, a live SMS gateway, a native mobile application, multi-language support and automated document verification are outside the current scope and are listed as future work.</p>
+</section>
+
+<!-- ================= 4. SYSTEM ARCHITECTURE ================= -->
+<section class="section">
+  <span class="marker">[[SEC:arch]]</span>
+  <h1>4. System Architecture</h1>
+  <p>MediShare uses a three-tier architecture. The browser renders static pages and JavaScript modules. The application tier is a set of PHP endpoints running on Apache. The data tier is a PostgreSQL database hosted on Supabase. External services provide payments and email OTP delivery.</p>
+  <pre>Browser (HTML + Bootstrap + JavaScript)
+        |
+        |  JSON over HTTP
+        v
+Apache + PHP 8 API  ---&gt;  Razorpay API (orders, payments)
+        |            ---&gt;  Supabase Auth (password-reset OTP)
+        |
+        |  PDO (prepared statements)
+        v
+PostgreSQL database (Supabase)</pre>
+  <h2>4.1 Modules</h2>
+  <ul>
+    <li><strong>Authentication and verification:</strong> registration, login, logout, sessions, document review and account approval.</li>
+    <li><strong>Medicine inventory:</strong> add, edit, remove, stock, expiry, batch, category, price and images.</li>
+    <li><strong>Store and cart:</strong> search, filters, cart persistence, delivery address and geolocation.</li>
+    <li><strong>Order management:</strong> order creation, grouping by distributor, status transitions, cancellation and rejection.</li>
+    <li><strong>Payments:</strong> Razorpay order creation and signature verification, cash on delivery and payment status.</li>
+    <li><strong>Notifications:</strong> in-app notifications, unread badge and periodic refresh.</li>
+    <li><strong>Reviews:</strong> one review per delivered order with rating and comment.</li>
+    <li><strong>Reports and audit:</strong> revenue and order statistics, CSV export and activity log.</li>
+    <li><strong>Password reset:</strong> email OTP, reset token and password update.</li>
+    <li><strong>Profile and map:</strong> profile updates, delivery location and a public map page.</li>
+  </ul>
+  <h2>4.2 Design Principles</h2>
+  <ul>
+    <li>Role-based access is enforced on the server, not only in the interface.</li>
+    <li>Every write that affects stock runs inside a database transaction.</li>
+    <li>Payment confirmation depends on a verified gateway signature.</li>
+    <li>Read-heavy responses are cached briefly and invalidated on writes.</li>
+    <li>Removed medicines are soft-deleted so historical orders remain intact.</li>
+  </ul>
+</section>
+
+<!-- ================= 5. TECHNICAL STACK ================= -->
+<section class="section">
+  <span class="marker">[[SEC:stack]]</span>
+  <h1>5. Technical Stack</h1>
+  <table class="data">
+    <thead><tr><th>Layer</th><th>Technology</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Front end</td><td>HTML5, CSS3, Bootstrap 5.3, Bootstrap Icons</td><td>Responsive pages and components</td></tr>
+      <tr><td>Client logic</td><td>Vanilla JavaScript</td><td>API calls, cart, dashboard rendering, validation</td></tr>
+      <tr><td>Back end</td><td>PHP 8.2</td><td>REST-style JSON endpoints, sessions, business logic</td></tr>
+      <tr><td>Database</td><td>PostgreSQL 15 on Supabase</td><td>Persistent relational data</td></tr>
+      <tr><td>Database access</td><td>PDO with prepared statements</td><td>Safe, parameterized queries</td></tr>
+      <tr><td>Payments</td><td>Razorpay (test mode)</td><td>UPI, card and net-banking payments</td></tr>
+      <tr><td>OTP email</td><td>Supabase Auth</td><td>Password-reset one-time passwords</td></tr>
+      <tr><td>Maps</td><td>Leaflet, OpenStreetMap, Google Maps links</td><td>Location display and directions</td></tr>
+      <tr><td>Web server</td><td>Apache (XAMPP)</td><td>Hosting the PHP application</td></tr>
+      <tr><td>Version control</td><td>Git and GitHub</td><td>Source control and collaboration</td></tr>
+      <tr><td>Testing</td><td>PHP cURL tests, Playwright</td><td>API and browser validation</td></tr>
+    </tbody>
+  </table>
+  <h2>5.1 Why This Stack</h2>
+  <p>PHP and PostgreSQL are widely available, well documented and suitable for a data-driven web application. Supabase provides a managed PostgreSQL instance without server administration. Bootstrap keeps the interface consistent and responsive. Razorpay offers a straightforward test-mode integration. Playwright provides reliable end-to-end browser testing.</p>
+</section>
+
+<!-- ================= 6. DATABASE DESIGN ================= -->
+<section class="section">
+  <span class="marker">[[SEC:db]]</span>
+  <h1>6. Database Design</h1>
+  <p>The database contains ten tables. The design separates common account data from role-specific profiles and keeps order history independent of current inventory.</p>
+  <table class="data">
+    <thead><tr><th>Table</th><th>Key Data</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>users</code></td><td>name, email, password hash, phone, address, city, latitude, longitude, role, org type, verified</td><td>Common account data</td></tr>
+      <tr><td><code>distributors</code></td><td>user_id, license number, license image</td><td>Distributor profile</td></tr>
+      <tr><td><code>ngos</code></td><td>user_id, registration number, registration image</td><td>Organization profile</td></tr>
+      <tr><td><code>medicines</code></td><td>name, category, price, MRP, stock, batch, expiry, shelf life, image, distributor, deleted, low-stock flag</td><td>Inventory</td></tr>
+      <tr><td><code>orders</code></td><td>organization, distributor, delivery address, coordinates, total, status, tracking number, timestamps</td><td>Order header</td></tr>
+      <tr><td><code>order_items</code></td><td>order, medicine, quantity, price</td><td>Order line items</td></tr>
+      <tr><td><code>transactions</code></td><td>order, amount, method, status, gateway reference</td><td>Payment record</td></tr>
+      <tr><td><code>notifications</code></td><td>user, type, text, read status, timestamp</td><td>User notifications</td></tr>
+      <tr><td><code>reviews</code></td><td>order, user, rating, comment</td><td>Delivered-order feedback</td></tr>
+      <tr><td><code>audit_logs</code></td><td>user, action, timestamp</td><td>Activity trail</td></tr>
+    </tbody>
+  </table>
+  <h2>6.1 Relationships</h2>
+  <ul>
+    <li>One user has at most one distributor profile or one organization profile.</li>
+    <li>One distributor owns many medicines.</li>
+    <li>One organization places many orders; one order belongs to one distributor.</li>
+    <li>One order contains many order items and has one transaction.</li>
+    <li>One delivered order can have one review.</li>
+  </ul>
+  <h2>6.2 Design Notes</h2>
+  <p>Medicine rows use a soft-delete flag because order items reference them. Prices are copied into order items at the time of ordering so later price changes do not alter historical orders. Order totals are computed on the server. Status values are constrained so that only valid lifecycle states can be stored.</p>
+</section>
+
+<!-- ================= 7. IMPLEMENTATION ================= -->
+<section class="section">
+  <span class="marker">[[SEC:impl]]</span>
+  <h1>7. Implementation</h1>
+  <h2>7.1 Authentication and Role Management</h2>
+  <p>Registration collects the user's name, email, password, phone, address, city, coordinates, role and, for distributors and organizations, license or registration details and an uploaded document. Passwords are stored with <code>password_hash()</code> and verified with <code>password_verify()</code>. A successful login regenerates the session ID and stores the user's identity in the PHP session. Protected endpoints call a shared role check, and the dashboard hides tabs that are not allowed for the current role.</p>
+  <h2>7.2 Admin Verification and Documents</h2>
+  <p>New distributor and organization accounts remain unverified until an administrator approves them. The verification page lists pending accounts and shows a thumbnail of the uploaded document, which opens the full image in a new tab. Approve and reject actions are written to the audit log.</p>
+  <h2>7.3 Medicine Inventory</h2>
+  <p>Distributors add medicines with name, category, price, MRP, stock, batch number, expiry date, shelf life and image. Existing medicines can be edited. Removal uses a soft-delete flag so past orders and invoices remain intact. When stock reaches zero, the medicine is removed from the store and the distributor is notified. Expired medicines and out-of-stock medicines are also removed automatically when the store is loaded, and a low-stock notification is generated below the configured threshold.</p>
+  <h2>7.4 Store, Cart and Geolocation</h2>
+  <p>The store shows available medicines with distributor name, category, price, stock, expiry and shelf life. Users can search by name and filter by category, remaining shelf life and distributor. The cart is stored in the browser so it survives page reloads. Delivery location is captured through the browser geolocation API and stored in a cookie; if permission is denied, checkout proceeds with the delivery address alone.</p>
+  <h2>7.5 Order Management</h2>
+  <p>When an order is placed, the server validates each medicine, checks expiry and stock, deducts the ordered quantity, groups items by distributor and creates one order per distributor. The minimum order value is &#8377;500 per distributor. The order, its line items and its transaction are written inside a database transaction. Organizations can cancel an order while it is Pending or Pending Payment; the cancellation restores reserved stock and marks the transaction as Cancelled. Distributors can reject pending orders, which also restores stock.</p>
+  <h2>7.6 Notifications, Reviews and Reports</h2>
+  <p>Notifications are stored in the database with a type, text and read status. They are generated for new orders, payment confirmation, acceptance, rejection, cancellation, delivery, low stock and expiry. The navigation bar shows an unread-count badge refreshed every 60 seconds. Organizations can review a delivered order once, with a rating and an optional comment. Reports show revenue, order counts, medicine counts and stock distribution, with CSV export. The audit log records sensitive actions with the user and timestamp.</p>
+  <h2>7.7 Module-to-File Mapping</h2>
+  <table class="data">
+    <thead><tr><th>Module</th><th>Main Files</th></tr></thead>
+    <tbody>
+      <tr><td>Authentication</td><td><code>auth/login.php</code>, <code>logout.php</code>, <code>session.php</code>, <code>register.php</code></td></tr>
+      <tr><td>Password reset</td><td><code>forgot-password.html</code>, <code>auth/forgot.php</code></td></tr>
+      <tr><td>Dashboard</td><td><code>dashboard.html</code>, <code>js/app.js</code></td></tr>
+      <tr><td>Medicine inventory</td><td><code>api/medicines.php</code></td></tr>
+      <tr><td>Store and cart</td><td><code>index.html</code>, <code>js/app.js</code></td></tr>
+      <tr><td>Orders</td><td><code>api/orders.php</code></td></tr>
+      <tr><td>Payments</td><td><code>api/payment.php</code></td></tr>
+      <tr><td>Notifications</td><td><code>api/notifications.php</code></td></tr>
+      <tr><td>Verification</td><td><code>api/verify.php</code></td></tr>
+      <tr><td>Reports and audit</td><td><code>api/reports.php</code>, <code>api/audit.php</code></td></tr>
+      <tr><td>Reviews and profile</td><td><code>api/reviews.php</code>, <code>api/profile.php</code></td></tr>
+      <tr><td>Map</td><td><code>map.html</code>, <code>api/locations.php</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ================= 8. ORDER LIFECYCLE & PAYMENTS ================= -->
+<section class="section">
+  <span class="marker">[[SEC:orders]]</span>
+  <h1>8. Order Lifecycle &amp; Payments</h1>
+  <h2>8.1 Status Flow</h2>
+  <pre>Razorpay:  Pending Payment --(verified payment)--&gt; Pending
+Cash:      Pending (immediately)
+
+Pending --(distributor accepts)--&gt; Accepted --&gt; Packed --&gt; Shipped
+        --&gt; Out for Delivery --&gt; Delivered
+
+Pending / Pending Payment --(organization cancels)--&gt; Cancelled
+Pending --(distributor rejects)--&gt; Cancelled</pre>
+  <p>Stock is deducted when the order is created. If an order is cancelled or rejected, the stock is restored. When the last units of a medicine are ordered, the medicine is marked removed and the distributor is notified. An unpaid Razorpay order cannot be accepted by the distributor, so payment confirmation is enforced on the server.</p>
+  <h2>8.2 Online Payments</h2>
+  <p>The server creates a Razorpay order with the server-computed total, stores the gateway order reference in the transaction row and returns the public key and order details to the browser. The Razorpay checkout supports UPI, cards and net banking, and UPI can be pre-selected so that the UPI section opens first.</p>
+  <p>After payment, the browser sends the Razorpay order ID, payment ID and signature to the server. The server recomputes the HMAC-SHA256 signature with the secret key and compares it using a timing-safe comparison. Only a valid signature moves the orders from Pending Payment to Pending and marks the transaction as Completed.</p>
+  <h2>8.3 Cash on Delivery</h2>
+  <p>Cash orders are confirmed immediately with a Pending transaction. The distributor can mark the payment as received after delivery. Payment status is displayed separately from order status so that the two concerns are not confused.</p>
+</section>
+
+<!-- ================= 9. SECURITY ================= -->
+<section class="section">
+  <span class="marker">[[SEC:security]]</span>
+  <h1>9. Security</h1>
+  <p>Security was treated as a cross-cutting concern rather than an add-on. The main measures are:</p>
+  <ul>
+    <li>passwords hashed with <code>password_hash()</code> and verified with <code>password_verify()</code>;</li>
+    <li>prepared statements for every database query to prevent SQL injection;</li>
+    <li>role checks on every protected endpoint, not only in the interface;</li>
+    <li>session ID regeneration after login;</li>
+    <li>HMAC-SHA256 verification of Razorpay payments with a timing-safe comparison;</li>
+    <li>HMAC-signed, expiring password-reset tokens;</li>
+    <li>generic responses for unknown email addresses to prevent account enumeration;</li>
+    <li>a five-attempt limit on OTP verification;</li>
+    <li><code>.htaccess</code> denies for the configuration and log folders;</li>
+    <li>PHP execution blocked inside the uploads folder;</li>
+    <li>credentials stored in <code>config/secrets.php</code>, which is excluded from Git;</li>
+    <li>user-uploaded license documents and logs excluded from Git;</li>
+    <li>audit logging of sensitive actions.</li>
+  </ul>
+  <p>The password-reset flow sends a 6-digit OTP through Supabase Auth, verifies it on the server, and issues a short-lived reset token. The new password is hashed before storage.</p>
+</section>
+
+<!-- ================= 10. PERFORMANCE ================= -->
+<section class="section">
+  <span class="marker">[[SEC:perf]]</span>
+  <h1>10. Performance Optimization</h1>
+  <p>Because the database is hosted remotely, a cold database round trip costs hundreds of milliseconds to several seconds. The following optimizations were applied:</p>
+  <ul>
+    <li><strong>Short-lived file cache:</strong> read-heavy GET endpoints cache JSON responses for 10&ndash;20 seconds. Every POST clears the cache, so writes are visible immediately.</li>
+    <li><strong>Lazy database connection:</strong> endpoints check the cache before opening a database connection, so cache hits avoid the database entirely.</li>
+    <li><strong>Session lock release:</strong> the PHP session is closed after reading the current user, allowing parallel requests.</li>
+    <li><strong>Combined queries:</strong> report statistics were reduced from four queries to one.</li>
+    <li><strong>Prefetching:</strong> the dashboard warms the APIs for all tabs after login, so tab switches hit the client or server cache.</li>
+    <li><strong>Client-side cache:</strong> the dashboard keeps GET responses for 30 seconds and the store keeps them longer.</li>
+  </ul>
+  <table class="data">
+    <thead><tr><th>Endpoint</th><th>Cold response</th><th>Cached response</th></tr></thead>
+    <tbody>
+      <tr><td>Orders</td><td>~916 ms</td><td>5&ndash;32 ms</td></tr>
+      <tr><td>Medicines</td><td>~1403 ms</td><td>3&ndash;4 ms</td></tr>
+      <tr><td>Notifications</td><td>~797 ms</td><td>27&ndash;28 ms</td></tr>
+      <tr><td>Reports</td><td>~1585 ms</td><td>12&ndash;27 ms</td></tr>
+    </tbody>
+  </table>
+  <p>The results show that caching and lazy connections remove most repeated database latency while short TTLs and write invalidation keep data fresh.</p>
+</section>
+
+<!-- ================= 11. TESTING ================= -->
+<section class="section">
+  <span class="marker">[[SEC:testing]]</span>
+  <h1>11. Testing &amp; Results</h1>
+  <p>Testing was performed at three levels: API tests using PHP and cURL, browser tests using Playwright, and a role-based smoke test that visited every page and tab.</p>
+  <table class="data">
+    <thead><tr><th>#</th><th>Test</th><th>Expected Result</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Login with valid credentials</td><td>Session created and dashboard opens</td><td>Pass</td></tr>
+      <tr><td>2</td><td>Login with wrong password</td><td>401 Invalid email or password</td><td>Pass</td></tr>
+      <tr><td>3</td><td>Unverified account login</td><td>403 Account pending verification</td><td>Pass</td></tr>
+      <tr><td>4</td><td>Admin approves a distributor with a license image</td><td>Account verified; document visible</td><td>Pass</td></tr>
+      <tr><td>5</td><td>Distributor adds a medicine</td><td>Medicine appears in the store</td><td>Pass</td></tr>
+      <tr><td>6</td><td>Distributor removes a medicine</td><td>Medicine disappears; order history remains</td><td>Pass</td></tr>
+      <tr><td>7</td><td>Organization places a cash order</td><td>Order Pending; stock reduced</td><td>Pass</td></tr>
+      <tr><td>8</td><td>Organization places a Razorpay order</td><td>Pending Payment; distributor cannot accept</td><td>Pass</td></tr>
+      <tr><td>9</td><td>Razorpay payment with a valid signature</td><td>Order Pending; transaction Completed</td><td>Pass</td></tr>
+      <tr><td>10</td><td>Razorpay payment with an invalid signature</td><td>Payment rejected</td><td>Pass</td></tr>
+      <tr><td>11</td><td>Organization cancels a pending order</td><td>Cancelled; stock restored; transaction Cancelled</td><td>Pass</td></tr>
+      <tr><td>12</td><td>Organization tries to cancel an accepted order</td><td>409 error</td><td>Pass</td></tr>
+      <tr><td>13</td><td>Ordering the last units of a medicine</td><td>Medicine removed; distributor notified</td><td>Pass</td></tr>
+      <tr><td>14</td><td>Expired medicine in the store</td><td>Medicine removed; distributor notified</td><td>Pass</td></tr>
+      <tr><td>15</td><td>Unread notifications</td><td>Badge shows the count</td><td>Pass</td></tr>
+      <tr><td>16</td><td>Review on a delivered order</td><td>Review saved; second review rejected</td><td>Pass</td></tr>
+      <tr><td>17</td><td>Forgot password with a registered email</td><td>OTP generated and verified</td><td>Pass</td></tr>
+      <tr><td>18</td><td>Password reset with a valid token</td><td>Password updated; login works</td><td>Pass</td></tr>
+      <tr><td>19</td><td>Reuse of a used OTP</td><td>Rejected</td><td>Pass</td></tr>
+      <tr><td>20</td><td>Tab access outside the user's role</td><td>Tab hidden; API returns 403</td><td>Pass</td></tr>
+    </tbody>
+  </table>
+  <p>All API and UI test suites passed. The smoke test rendered every role's tabs with zero JavaScript errors; the only console messages were expected 401 responses for guests. Test data was removed after the runs.</p>
+</section>
+
+<!-- ================= 12. LIMITATIONS & FUTURE ================= -->
+<section class="section">
+  <span class="marker">[[SEC:future]]</span>
+  <h1>12. Limitations &amp; Future Work</h1>
+  <h2>12.1 Limitations</h2>
+  <ul>
+    <li>Email and SMS delivery require external configuration; email is disabled by default and SMS is a stub.</li>
+    <li>Razorpay is used in test mode; live payments require live keys and compliance checks.</li>
+    <li>There is no integration with courier or delivery-partner APIs.</li>
+    <li>Geolocation depends on browser permission and may be inaccurate.</li>
+    <li>The application is a responsive web app, not a native mobile app.</li>
+    <li>The hosted database adds network latency to cold requests.</li>
+    <li>Admin verification is manual, and the interface is available in English only.</li>
+  </ul>
+  <h2>12.2 Future Work</h2>
+  <ul>
+    <li>Enable live Razorpay payments and configure SMTP for real email delivery.</li>
+    <li>Integrate an SMS gateway such as Twilio or MSG91.</li>
+    <li>Add delivery-partner tracking and route optimization.</li>
+    <li>Add barcode or QR scanning for medicine batches.</li>
+    <li>Use OCR to assist license verification.</li>
+    <li>Add demand forecasting and early expiry alerts.</li>
+    <li>Build a mobile application for distributors and field staff.</li>
+    <li>Add multi-language support, accessibility improvements, backups and monitoring.</li>
+  </ul>
+</section>
+
+<!-- ================= 13. CONCLUSION & REFERENCES ================= -->
+<section class="section">
+  <span class="marker">[[SEC:conclusion]]</span>
+  <h1>13. Conclusion &amp; References</h1>
+  <h2>13.1 Conclusion</h2>
+  <p>MediShare demonstrates how a focused web application can reduce medicine wastage and improve access for social organizations. The project covers the complete operational cycle: registration, verification, inventory, store, cart, payment, order tracking, cancellation, notifications, reviews, reports and password recovery.</p>
+  <p>The implementation emphasizes correctness at trust boundaries: verified accounts, server-side payment verification, transactional stock handling, role-based authorization and audit logging. Caching and lazy database access keep the interface responsive despite a hosted database. The system is ready for extension with live payment credentials, real email and SMS delivery, and delivery-partner integration.</p>
+  <h2>13.2 References</h2>
+  <ol class="refs">
+    <li>PHP Documentation &mdash; https://www.php.net/docs.php</li>
+    <li>PostgreSQL Documentation &mdash; https://www.postgresql.org/docs/</li>
+    <li>Supabase Documentation &mdash; https://supabase.com/docs</li>
+    <li>Razorpay Payments Documentation &mdash; https://razorpay.com/docs/</li>
+    <li>Bootstrap 5 Documentation &mdash; https://getbootstrap.com/docs/5.3/</li>
+    <li>MDN Web Docs &mdash; https://developer.mozilla.org/</li>
+    <li>OWASP Application Security Verification Standard &mdash; https://owasp.org/www-project-application-security-verification-standard/</li>
+    <li>Playwright Documentation &mdash; https://playwright.dev/</li>
+    <li>Leaflet Documentation &mdash; https://leafletjs.com/</li>
+    <li>OpenStreetMap &mdash; https://www.openstreetmap.org/</li>
+  </ol>
+</section>
+
+<!-- ================= APPENDIX ================= -->
+<section class="section">
+  <span class="marker">[[SEC:appendix]]</span>
+  <h1>Appendix &mdash; Setup &amp; API Reference</h1>
+  <h2>A. Setup Instructions</h2>
+  <ol>
+    <li>Install XAMPP with PHP 8.2 and enable the <code>pdo_pgsql</code> and <code>curl</code> extensions.</li>
+    <li>Import <code>database.sql</code> into a PostgreSQL or Supabase database.</li>
+    <li>Copy <code>config/secrets.example.php</code> to <code>config/secrets.php</code> and fill in the database, Razorpay and Supabase values.</li>
+    <li>Place the project under the Apache document root and open <code>index.html</code>.</li>
+    <li>For password-reset email, add <code>{{ .Token }}</code> to the Magic Link template in Supabase Authentication &rarr; Email Templates.</li>
+  </ol>
+  <h2>B. Seed Accounts</h2>
+  <p class="small">All seed accounts use the password <code>admin123</code>.</p>
+  <table class="data">
+    <thead><tr><th>Role</th><th>Email</th></tr></thead>
+    <tbody>
+      <tr><td>Administrator</td><td>admin@medshare.com</td></tr>
+      <tr><td>Distributor</td><td>medplus@medshare.com</td></tr>
+      <tr><td>Distributor</td><td>pharmalink@medshare.com</td></tr>
+      <tr><td>Organization</td><td>hope@medshare.com</td></tr>
+      <tr><td>Organization</td><td>citycare@medshare.com</td></tr>
+    </tbody>
+  </table>
+  <h2>C. Configuration Keys</h2>
+  <p class="small">All values are stored in <code>config/secrets.php</code>, which is excluded from version control.</p>
+  <table class="data">
+    <thead><tr><th>Constant</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>DB_DSN</code>, <code>DB_USER</code>, <code>DB_PASS</code></td><td>PostgreSQL connection</td></tr>
+      <tr><td><code>RAZORPAY_KEY_ID</code>, <code>RAZORPAY_KEY_SECRET</code></td><td>Payment gateway credentials</td></tr>
+      <tr><td><code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code></td><td>Supabase Auth for password-reset OTP</td></tr>
+      <tr><td><code>RESET_SECRET</code></td><td>Signing key for reset tokens</td></tr>
+    </tbody>
+  </table>
+  <h2 style="page-break-before: always; margin-top: 0;">D. API Endpoints</h2>
+  <table class="data">
+    <thead><tr><th>Endpoint</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>auth/login.php</code>, <code>auth/logout.php</code>, <code>auth/session.php</code></td><td>Authentication</td></tr>
+      <tr><td><code>auth/register.php</code></td><td>Registration with document upload</td></tr>
+      <tr><td><code>auth/forgot.php</code></td><td>Password-reset OTP request, verification and reset</td></tr>
+      <tr><td><code>api/medicines.php</code></td><td>Medicine list, details, add, edit, remove</td></tr>
+      <tr><td><code>api/orders.php</code></td><td>Order creation, status actions, cancellation, list</td></tr>
+      <tr><td><code>api/payment.php</code></td><td>Razorpay order creation and verification</td></tr>
+      <tr><td><code>api/notifications.php</code></td><td>List and mark notifications as read</td></tr>
+      <tr><td><code>api/verify.php</code></td><td>Admin approval of accounts</td></tr>
+      <tr><td><code>api/distributors.php</code></td><td>Distributor profiles and admin list</td></tr>
+      <tr><td><code>api/reviews.php</code></td><td>Reviews for delivered orders</td></tr>
+      <tr><td><code>api/reports.php</code></td><td>Statistics and CSV export</td></tr>
+      <tr><td><code>api/audit.php</code></td><td>Audit log</td></tr>
+      <tr><td><code>api/profile.php</code></td><td>Profile update</td></tr>
+      <tr><td><code>api/locations.php</code></td><td>Verified locations for the map</td></tr>
+    </tbody>
+  </table>
+  <p class="small" style="margin-top:8mm; text-align:center;"><em>End of Report</em></p>
+</section>
+
+</body>
+</html>

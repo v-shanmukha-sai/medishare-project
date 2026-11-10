@@ -8,6 +8,10 @@ $d = body();
 $action = $d['action'] ?? '';
 $email = strtolower(trim($d['email'] ?? ''));
 
+if (in_array($action, ['verify', 'reset'], true) && RESET_SECRET === '') {
+  respond(['ok' => false, 'error' => 'Password reset is not configured.'], 503);
+}
+
 function supabase_auth(string $path, array $payload): array {
   $ch = curl_init(SUPABASE_URL . '/auth/v1/' . $path);
   curl_setopt_array($ch, [
@@ -40,6 +44,9 @@ if ($action === 'request') {
   }
 
   if (SUPABASE_ANON_KEY === '') {
+    if (APP_ENV === 'production') {
+      respond(['ok' => false, 'error' => 'Password reset email is not configured. Contact the administrator.'], 503);
+    }
     $otp = (string)random_int(100000, 999999);
     $f = otp_file($email);
     if (!is_dir(dirname($f))) @mkdir(dirname($f), 0755, true);
@@ -60,6 +67,9 @@ if ($action === 'verify') {
   if (strlen($otp) !== 6) respond(['ok' => false, 'error' => 'Enter the 6-digit OTP.'], 422);
 
   if (SUPABASE_ANON_KEY === '') {
+    if (APP_ENV === 'production') {
+      respond(['ok' => false, 'error' => 'Password reset email is not configured. Contact the administrator.'], 503);
+    }
     $f = otp_file($email);
     $rec = is_file($f) ? json_decode((string)file_get_contents($f), true) : null;
     if (!$rec || $rec['expires'] < time()) respond(['ok' => false, 'error' => 'OTP expired. Request a new one.'], 422);

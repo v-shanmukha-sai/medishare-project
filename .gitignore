@@ -2,6 +2,7 @@
 config/secrets.php
 .env
 .env.*
+!.env.example
 
 # User uploads: license documents and uploaded medicine photos
 uploads/licenses/*
