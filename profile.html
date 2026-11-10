@@ -1,0 +1,82 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My profile - MediShare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="css/style.css?v=20261052" rel="stylesheet">
+</head>
+<body>
+  <div id="nav"></div>
+
+  <main class="container py-5 profile-wrap">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <h1 class="profile-title mb-1">My profile</h1>
+        <div class="text-secondary" id="profEmail">&nbsp;</div>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <span class="pill pill-green" id="profRole">&nbsp;</span>
+        <span class="pill pill-gray" id="profVerified">&nbsp;</span>
+      </div>
+    </div>
+
+    <div class="row g-3 mt-4">
+      <div class="col-md-6">
+        <div class="card profile-card h-100"><div class="card-body p-4">
+          <div class="profile-lbl">Orders placed</div>
+          <div class="profile-num" id="profOrders">0</div>
+          <a class="profile-link" href="dashboard.html?page=orders">View order history &rarr;</a>
+        </div></div>
+      </div>
+      <div class="col-md-6">
+        <div class="card profile-card h-100"><div class="card-body p-4">
+          <div class="profile-lbl">Account type</div>
+          <div class="profile-account" id="profAccount">&nbsp;</div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-5 mb-1">
+      <h2 class="profile-h2 mb-0">Details</h2>
+      <button class="btn btn-white-pill btn-sm" id="editProfileBtn">Edit</button>
+    </div>
+    <dl class="profile-facts" id="profDetails"></dl>
+
+    <a class="btn btn-white-pill w-100 mt-3" href="auth/logout.php">Sign out</a>
+  </main>
+
+  <div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title">Edit details</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <form id="editProfileForm" novalidate>
+            <div class="mb-2"><label class="form-label small">Full name *</label><input class="form-control" id="epName" required></div>
+            <div class="mb-2"><label class="form-label small">Phone</label><input class="form-control" id="epPhone"></div>
+            <div class="mb-3"><label class="form-label small">Address</label><textarea class="form-control" id="epAddress" rows="2"></textarea></div>
+            <div class="row g-2 mb-3">
+              <div class="col-6"><label class="form-label small">Latitude</label><input type="number" step="any" class="form-control" id="epLat"></div>
+              <div class="col-6"><label class="form-label small">Longitude</label><input type="number" step="any" class="form-control" id="epLng"></div>
+            </div>
+            <button class="btn btn-primary w-100" type="submit">Save changes</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/cart.js?v=20261052"></script>
+  <script src="js/store.js?v=20261052"></script>
+</body>
+</html>
+
+

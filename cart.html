@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart - MediShare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="css/style.css?v=20261052" rel="stylesheet">
+</head>
+<body>
+  <div id="nav"></div>
+
+  <main class="container py-5">
+    <div class="section-head"><h2>Cart</h2></div>
+    <p class="cart-empty d-none" id="cartEmpty">Your cart is empty. <a href="store.html">Browse medicines</a></p>
+    <div class="row g-4 d-none" id="cartFull">
+      <div class="col-lg-8">
+        <div class="card"><div class="card-body">
+          <div class="table-responsive"><table class="table align-middle mb-0">
+            <thead class="table-light"><tr><th>Medicine</th><th>Distributor</th><th>Price</th><th style="width:130px">Qty</th><th>Total</th><th></th></tr></thead>
+            <tbody id="cartBody"></tbody>
+          </table></div>
+        </div></div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card"><div class="card-body p-4">
+          <h6 class="mb-3">Checkout</h6>
+          <div class="d-flex justify-content-between align-items-center mb-3"><span class="text-secondary">Total</span><span class="h4 mb-0 fw-bold" id="cartTotal">&#8377;0</span></div>
+          <div id="checkoutBox"></div>
+        </div></div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/cart.js?v=20261052"></script>
+  <script src="js/store.js?v=20261052"></script>
+</body>
+</html>
+
+

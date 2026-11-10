@@ -1,0 +1,88 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Map - MediShare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="css/style.css?v=20261052" rel="stylesheet">
+  <style>
+    #map { height: 70vh; width: 100%; border: 1px solid #ddd; border-radius: 12px; }
+    .leaflet-popup-content-wrapper { font-family: Inter, sans-serif; }
+    .map-actions { display: flex; gap: 8px; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div id="nav"></div>
+
+  <main class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+      <div>
+        <div class="dash-eyebrow">Delivery Map</div>
+        <h1 class="dash-title">Delivery Destinations</h1>
+      </div>
+      <div class="map-actions">
+        <a class="btn btn-white-pill btn-sm" href="dashboard.html"><i class="bi bi-arrow-left"></i> Back</a>
+      </div>
+    </div>
+    <div class="text-secondary mb-3 small">Verified organizations and distributors with a saved location. Click a marker for address and directions.</div>
+    <div id="map"></div>
+  </main>
+
+  <div id="footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="js/cart.js?v=20261052"></script>
+  <script>
+    (function () {
+      const map = L.map('map', { scrollWheelZoom: false });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      const markers = {};
+      const defaultCenter = [17.3850, 78.4867];
+      map.setView(defaultCenter, 11);
+
+      async function load() {
+        const res = await fetch('api/locations.php');
+        const data = await res.json();
+        if (!data.ok) return;
+        const pts = data.locations;
+        if (!pts.length) {
+          document.querySelector('main .text-secondary').textContent = 'No locations available yet. Ask verified organizations to add their location in My Profile.';
+          return;
+        }
+        const group = L.featureGroup().addTo(map);
+        pts.forEach(p => {
+          const iconColor = p.role === 'distributor' ? '#0B5C4E' : '#198754';
+          const marker = L.marker([p.lat, p.lng]).addTo(group);
+          const roleBadge = p.role === 'distributor' ? '<span class="badge bg-dark">Distributor</span>' : '<span class="badge bg-success">Organization</span>';
+          const extra = (p.role === 'distributor' && p.license_no ? `<div class="small text-muted">License: ${p.license_no}</div>` : (p.registration_no ? `<div class="small text-muted">Reg: ${p.registration_no}</div>` : ''));
+          marker.bindPopup(`
+            <div style="min-width:220px">
+              <div class="fw-bold">${p.name}</div>
+              ${roleBadge}
+              <div class="small text-muted mt-1">${p.address || 'Address not provided'}</div>
+              <div class="small text-muted">${p.city || ''}</div>
+              ${extra}
+              <div class="mt-2">
+                <a href="https://www.openstreetmap.org/directions?to=${p.lat},${p.lng}" target="_blank" class="btn btn-sm btn-primary w-100"><i class="bi bi-geo-alt"></i> Get Directions</a>
+              </div>
+            </div>
+          `);
+          markers[p.id] = marker;
+        });
+        map.fitBounds(group.getBounds().pad(0.15));
+      }
+      load();
+    })();
+  </script>
+</body>
+</html>
+

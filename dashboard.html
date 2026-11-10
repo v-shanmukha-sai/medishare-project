@@ -1,73 +1,145 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - MedShare</title>
+  <title>Dashboard - MediShare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="css/style.css" rel="stylesheet">
+  <link href="css/style.css?v=20261052" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    .track-timeline { list-style: none; padding: 0; margin: 0; }
+    .track-timeline li { position: relative; padding: 0 0 22px 30px; color: #6F7A74; font-weight: 600; }
+    .track-timeline li::before { content: ''; position: absolute; left: 9px; top: 16px; bottom: -4px; width: 2px; background: #E3E7E4; }
+    .track-timeline li:last-child::before { display: none; }
+    .track-timeline .dot { position: absolute; left: 3px; top: 2px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #C9D1CC; background: #fff; }
+    .track-timeline li.done { color: #0B5C4E; }
+    .track-timeline li.done .dot { background: #0B5C4E; border-color: #0B5C4E; }
+  </style>
 </head>
 <body>
-  <div class="d-flex">
-    <aside class="sidebar bg-dark text-white d-none d-md-flex flex-column p-3" id="sidebar">
-      <a href="index.html" class="navbar-brand fw-bold text-white mb-4"><i class="bi bi-heart-pulse-fill"></i> MedShare</a>
-      <nav class="nav flex-column" id="sideNav">
-        <a class="nav-link text-white" data-page="overview"><i class="bi bi-speedometer2"></i> Overview</a>
-        <a class="nav-link text-white" data-page="medicines"><i class="bi bi-capsule"></i> Medicines</a>
-        <a class="nav-link text-white" data-page="orders"><i class="bi bi-cart"></i> Orders</a>
-        <a class="nav-link text-white" data-page="notifications"><i class="bi bi-bell"></i> Notifications <span class="badge bg-danger ms-1" id="notifCount">0</span></a>
-        <a class="nav-link text-white" data-page="reports"><i class="bi bi-clipboard-data"></i> Reports</a>
-        <a class="nav-link text-white" data-page="audit"><i class="bi bi-journal-check"></i> Audit Logs</a>
-        <a class="nav-link text-white" data-page="verify"><i class="bi bi-patch-check"></i> Verification</a>
-      </nav>
-      <hr class="text-secondary">
-      <div class="mt-auto small">
-        <div class="fw-bold" id="userName">User</div>
-        <div class="text-secondary" id="userRole">-</div>
-        <a href="index.html" class="btn btn-sm btn-outline-light mt-2 w-100"><i class="bi bi-box-arrow-right"></i> Logout</a>
-      </div>
-    </aside>
+  <div id="nav"></div>
 
-    <main class="flex-grow-1">
-      <nav class="navbar navbar-dark bg-primary d-md-none sticky-top">
-        <div class="container-fluid">
-          <a class="navbar-brand fw-bold" href="index.html"><i class="bi bi-heart-pulse-fill"></i> MedShare</a>
-          <div class="dropdown">
-            <button class="btn btn-light btn-sm dropdown-toggle" data-bs-toggle="dropdown"><i class="bi bi-person"></i> <span id="userNameM">User</span></button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li><button class="dropdown-item" data-page="overview">Overview</button></li>
-              <li><button class="dropdown-item" data-page="medicines">Medicines</button></li>
-              <li><button class="dropdown-item" data-page="orders">Orders</button></li>
-              <li><button class="dropdown-item" data-page="notifications">Notifications</button></li>
-              <li><button class="dropdown-item" data-page="reports">Reports</button></li>
-              <li><button class="dropdown-item" data-page="audit">Audit Logs</button></li>
-              <li><button class="dropdown-item" data-page="verify">Verification</button></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item text-danger" href="index.html">Logout</a></li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
-      <div class="container-fluid p-4" id="pageArea">
-        <div id="pageTitle" class="h4 mb-4">Overview</div>
-        <div id="pageContent"><!-- JS renders here --></div>
+  <main class="container py-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div>
+        <div class="dash-eyebrow">My dashboard</div>
+        <h1 id="pageTitle" class="dash-title">Overview</h1>
       </div>
-    </main>
-  </div>
+      <div class="d-flex align-items-center gap-3">
+        <a class="icon-link" href="profile.html"><i class="bi bi-person"></i> <span>Profile</span></a>
+        <a class="btn btn-white-pill btn-sm" href="auth/logout.php"><i class="bi bi-box-arrow-right"></i> Sign out</a>
+      </div>
+    </div>
+    <div class="text-secondary mb-4">Signed in as <b class="text-dark" id="userName">User</b> Â· <span id="userRole">-</span></div>
+
+    <div class="dash-tabs mb-4" id="dashTabs">
+      <a class="dash-tab" data-page="overview"><i class="bi bi-speedometer2"></i> Overview</a>
+      <a class="dash-tab" data-page="medicines"><i class="bi bi-capsule"></i> Medicines</a>
+      <a class="dash-tab" data-page="orders"><i class="bi bi-cart"></i> Orders</a>
+<a class="dash-tab" data-page="history"><i class="bi bi-clock-history"></i> Order History</a>
+      <a class="dash-tab" data-page="reviews"><i class="bi bi-star"></i> Reviews</a>
+      <a class="dash-tab" data-page="notifications"><i class="bi bi-bell"></i> Notifications <span class="badge" id="notifCount">0</span></a>
+      <a class="dash-tab" data-page="reports"><i class="bi bi-clipboard-data"></i> Reports</a>
+      <a class="dash-tab" data-page="distributors"><i class="bi bi-truck"></i> Distributors</a>
+      <a class="dash-tab" data-page="audit"><i class="bi bi-journal-check"></i> Audit Logs</a>
+      <a class="dash-tab" data-page="verify"><i class="bi bi-patch-check"></i> Verification</a>
+      <a class="dash-tab" data-page="map"><i class="bi bi-map"></i> Delivery Map</a>
+    </div>
+
+    <div id="pageContent"><!-- JS renders here --></div>
+  </main>
 
   <div class="modal fade" id="orderModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
-        <div class="modal-header"><h5 class="modal-title">Place Order</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title">Place Order</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body" id="orderModalBody"></div>
       </div>
     </div>
   </div>
 
+  <div class="modal fade" id="addMedModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title">Add Medicine</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <form id="addMedForm" novalidate>
+            <div class="mb-2"><label class="form-label small">Name *</label><input class="form-control" id="mName" required></div>
+            <div class="mb-2"><label class="form-label small">Category *</label><input class="form-control" id="mCat" required></div>
+            <div class="row g-2 mb-2">
+              <div class="col-3"><label class="form-label small">Price *</label><input type="number" step="0.01" min="0.01" class="form-control" id="mPrice" required></div>
+              <div class="col-3"><label class="form-label small">MRP</label><input type="number" step="0.01" min="0.01" class="form-control" id="mMrp" placeholder="optional"></div>
+              <div class="col-3"><label class="form-label small">Stock *</label><input type="number" min="0" class="form-control" id="mStock" required></div>
+              <div class="col-3"><label class="form-label small">Batch No</label><input class="form-control" id="mBatch"></div>
+            </div>
+            <div class="mb-2">
+              <label class="form-label small">Photo (JPG/PNG/WEBP, max 2MB)</label>
+              <input type="file" class="form-control" id="mImage" accept=".jpg,.jpeg,.png,.webp">
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <button type="button" class="btn btn-sm btn-outline-primary" id="takePhotoBtn"><i class="bi bi-camera"></i> Take photo</button>
+                <img id="camPreview" class="cam-preview d-none" alt="Captured photo">
+                <span id="camNote" class="small text-secondary d-none">Camera photo attached</span>
+              </div>
+            </div>
+            <div class="mb-3"><label class="form-label small">Expiry Date *</label><input type="date" class="form-control" id="mExpiry" required></div>
+            <button class="btn btn-primary w-100" type="submit">Save Medicine</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title">Review Order</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <input type="hidden" id="revOrderId">
+          <div class="text-center fs-3 mb-2" id="revStars"><span class="star-btn text-secondary" data-v="1">â˜†</span><span class="star-btn text-secondary" data-v="2">â˜†</span><span class="star-btn text-secondary" data-v="3">â˜†</span><span class="star-btn text-secondary" data-v="4">â˜†</span><span class="star-btn text-secondary" data-v="5">â˜†</span></div>
+          <textarea class="form-control mb-3" id="revComment" rows="3" placeholder="Your feedback about this distributor..."></textarea>
+          <button class="btn btn-primary w-100" id="submitReview">Submit Review</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="trackModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title" id="trackTitle">Order</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body" id="trackBody"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="cameraModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0"><h5 class="modal-title">Take photo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <div class="alert alert-warning small d-none" id="camError">Camera not available or permission denied. Use the file upload instead.</div>
+          <video id="camVideo" class="w-100 rounded-3" autoplay muted playsinline></video>
+          <button class="btn btn-primary w-100 mt-3" id="camShoot"><i class="bi bi-camera"></i> Capture photo</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/data.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/cart.js?v=20261052"></script>
+  <script src="js/app.js?v=20261052"></script>
 </body>
 </html>
+
+
+
+
+
+
