@@ -61,6 +61,7 @@ CREATE TABLE orders (
   org_user_id INT NOT NULL REFERENCES users(id),
   distributor_id INT NOT NULL REFERENCES distributors(id),
   delivery_address TEXT NOT NULL,
+  delivery_phone VARCHAR(15) DEFAULT NULL,
   latitude DECIMAL(10,8) DEFAULT NULL,
   longitude DECIMAL(11,8) DEFAULT NULL,
   total DECIMAL(10,2) NOT NULL DEFAULT 0,

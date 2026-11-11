@@ -7,7 +7,7 @@ $password = $_POST['password'] ?? '';
 $role = strtolower(trim($_POST['role'] ?? ''));
 if ($role === 'ngo') $role = 'org';
 $orgType = $_POST['orgType'] ?? null;
-$phone = trim($_POST['phone'] ?? '');
+$phone = preg_replace('/\D/', '', (string)($_POST['phone'] ?? ''));
 $address = trim($_POST['address'] ?? '');
 $city = trim($_POST['city'] ?? '');
 $credential = trim($_POST['credential_no'] ?? '');
@@ -19,8 +19,8 @@ if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || strlen($passwo
 if (!in_array($role, ['distributor', 'org'], true)) {
   respond(['ok' => false, 'error' => 'Invalid account type.'], 422);
 }
-if ($phone === '' || $city === '') {
-  respond(['ok' => false, 'error' => 'Contact phone and city are required.'], 422);
+if (!preg_match('/^\d{10}$/', $phone) || $city === '') {
+  respond(['ok' => false, 'error' => 'A valid 10-digit contact phone and city are required.'], 422);
 }
 if ($credential === '' || strlen($credential) > 60) {
   respond(['ok' => false, 'error' => 'A valid license / registration number is required (max 60 characters).'], 422);

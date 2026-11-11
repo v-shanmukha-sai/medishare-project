@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - MediShare</title>
+  <title>Register - MEDRED</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
         <input type="password" class="form-control form-control-lg" id="password" minlength="6" placeholder="Password (min 6 characters)" required>
       </div>
       <div class="mb-3">
-        <input type="tel" class="form-control form-control-lg" id="phone" placeholder="Contact phone" required>
+        <input type="tel" class="form-control form-control-lg" id="phone" placeholder="10-digit contact phone" inputmode="numeric" maxlength="10" minlength="10" pattern="[0-9]{10}" required>
       </div>
       <div class="mb-3">
         <input type="text" class="form-control form-control-lg" id="city" placeholder="City" required>

@@ -1,5 +1,5 @@
 <?php
-/* MediShare configuration + JSON helpers. Supabase Postgres + Storage.
+/* MEDRED configuration + JSON helpers. Supabase Postgres + Storage.
    Values come from environment variables first (Render), then from the
    gitignored config/secrets.php for local XAMPP use. */
 
@@ -54,13 +54,71 @@ define('SUPABASE_ANON_KEY', env_value('SUPABASE_ANON_KEY', $SECRETS['supabase_an
 define('SUPABASE_SERVICE_ROLE_KEY', env_value('SUPABASE_SERVICE_ROLE_KEY', $SECRETS['supabase_service_role_key'] ?? ''));
 define('RESET_SECRET', env_value('RESET_SECRET', $SECRETS['reset_secret'] ?? ''));
 define('APP_ENV', env_value('APP_ENV', getenv('PORT') !== false ? 'production' : 'development'));
-define('MEDISHARE_EMAIL', filter_var(env_value('MEDISHARE_EMAIL', 'false'), FILTER_VALIDATE_BOOLEAN));
+define('MEDRED_EMAIL', filter_var(env_value('MEDRED_EMAIL', env_value('MEDISHARE_EMAIL', 'false')), FILTER_VALIDATE_BOOLEAN));
 define('SMTP_HOST', env_value('SMTP_HOST', $SECRETS['smtp_host'] ?? ''));
 define('SMTP_PORT', env_value('SMTP_PORT', $SECRETS['smtp_port'] ?? '587'));
 define('SMTP_SECURE', env_value('SMTP_SECURE', $SECRETS['smtp_secure'] ?? 'tls'));
 define('SMTP_USER', env_value('SMTP_USER', $SECRETS['smtp_user'] ?? ''));
 define('SMTP_PASS', env_value('SMTP_PASS', $SECRETS['smtp_pass'] ?? ''));
-define('SMTP_FROM', env_value('SMTP_FROM', $SECRETS['smtp_from'] ?? 'noreply@medishare.local'));
+define('SMTP_FROM', env_value('SMTP_FROM', $SECRETS['smtp_from'] ?? 'noreply@medred.local'));
+
+/* ---------- session / persistent login ---------- */
+function ms_is_https(): bool {
+  if (!empty($_SERVER['HTTPS']) && strtolower((string)$_SERVER['HTTPS']) !== 'off') return true;
+  return str_contains(strtolower((string)($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')), 'https');
+}
+
+function ms_cookie_options(int $expires): array {
+  return ['expires' => $expires, 'path' => '/', 'secure' => ms_is_https(), 'httponly' => true, 'samesite' => 'Lax'];
+}
+
+function ms_session_start(): void {
+  if (session_status() === PHP_SESSION_ACTIVE) return;
+  $life = 60 * 60 * 24 * 30; /* 30 days, cleared on sign out */
+  ini_set('session.gc_maxlifetime', (string)$life);
+  ini_set('session.cookie_lifetime', (string)$life);
+  session_set_cookie_params([
+    'lifetime' => $life,
+    'path' => '/',
+    'secure' => ms_is_https(),
+    'httponly' => true,
+    'samesite' => 'Lax',
+  ]);
+  session_start();
+}
+
+/* Signed remember cookie so a login survives browser restarts and Render
+   restarts (which lose PHP session files). Invalidated by password reset. */
+function remember_login(array $user): void {
+  if (RESET_SECRET === '') return;
+  $exp = time() + 60 * 60 * 24 * 30;
+  $sig = hash_hmac('sha256', $user['id'] . '|' . $exp . '|' . $user['password'], RESET_SECRET);
+  setcookie('medred_remember', base64_encode($user['id'] . '|' . $exp . '|' . $sig), ms_cookie_options($exp));
+}
+
+function forget_login(): void {
+  setcookie('medred_remember', '', ms_cookie_options(time() - 3600));
+}
+
+function remember_user(): ?array {
+  if (RESET_SECRET === '' || empty($_COOKIE['medred_remember'])) return null;
+  $raw = base64_decode((string)$_COOKIE['medred_remember'], true);
+  $parts = $raw ? explode('|', $raw) : [];
+  if (count($parts) !== 3) { forget_login(); return null; }
+  [$id, $exp, $sig] = $parts;
+  if ((int)$exp < time()) { forget_login(); return null; }
+  $st = db()->prepare('SELECT id, name, email, role, org_type, address, phone, password, verified FROM users WHERE id = ?');
+  $st->execute([(int)$id]);
+  $user = $st->fetch();
+  if (!$user || !(int)$user['verified']) { forget_login(); return null; }
+  $expected = hash_hmac('sha256', $user['id'] . '|' . $exp . '|' . $user['password'], RESET_SECRET);
+  if (!hash_equals($expected, $sig)) { forget_login(); return null; }
+  return [
+    'id' => (int)$user['id'], 'name' => $user['name'], 'email' => $user['email'],
+    'role' => $user['role'], 'org_type' => $user['org_type'],
+    'address' => $user['address'], 'phone' => $user['phone'],
+  ];
+}
 
 require __DIR__ . '/storage.php';
 
@@ -87,6 +145,7 @@ function db(): PDO {
         ]
       );
     } catch (PDOException $e) {
+      error_log('MEDRED DB connection failed: ' . $e->getMessage());
       respond(['ok' => false, 'error' => 'Database unavailable. Check the Supabase connection and try again.'], 503);
     }
   }
@@ -133,7 +192,7 @@ function audit_log(PDO $pdo, ?int $userId, string $action): void {
   $st->execute([$userId ?? 0, $action]);
 }
 
-/* Minimal SMTP sender over cURL. Used only when MEDISHARE_EMAIL is true and
+/* Minimal SMTP sender over cURL. Used only when MEDRED_EMAIL is true and
    SMTP_HOST is set; otherwise falls back to PHP mail(). */
 function smtp_send(string $to, string $subject, string $body): bool {
   $secure = strtolower(SMTP_SECURE);
@@ -142,7 +201,7 @@ function smtp_send(string $to, string $subject, string $body): bool {
   $from = SMTP_FROM;
   $headers = [
     'To: <' . $to . '>',
-    'From: MediShare <' . $from . '>',
+    'From: MEDRED <' . $from . '>',
     'Subject: ' . $subject,
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
@@ -165,7 +224,7 @@ function smtp_send(string $to, string $subject, string $body): bool {
     CURLOPT_TIMEOUT => 15,
   ]);
   $ok = curl_exec($ch) !== false;
-  if (!$ok) error_log('MediShare SMTP: ' . curl_error($ch));
+  if (!$ok) error_log('MEDRED SMTP: ' . curl_error($ch));
   curl_close($ch);
   fclose($fp);
   return $ok;
@@ -185,15 +244,15 @@ function notify(PDO $pdo, int $userId, string $type, string $text): void {
   $user = $st->fetch();
   if (!$user) return;
 
-  if (MEDISHARE_EMAIL) {
+  if (MEDRED_EMAIL) {
     $to = $user['email'];
-    $subject = 'MediShare - ' . ucfirst($type);
-    $body = "Hello {$user['name']},\n\n$text\n\n-- MediShare Team";
+    $subject = 'MEDRED - ' . ucfirst($type);
+    $body = "Hello {$user['name']},\n\n$text\n\n-- MEDRED Team";
     $headers = "From: " . SMTP_FROM . "\r\n";
     $sent = SMTP_HOST !== ''
       ? smtp_send($to, $subject, $body)
       : @mail($to, $subject, $body, $headers);
-    if (!$sent) error_log("MediShare: could not send email to $to");
+    if (!$sent) error_log("MEDRED: could not send email to $to");
   }
 
   if ($user['phone']) {
@@ -207,7 +266,11 @@ function notify(PDO $pdo, int $userId, string $type, string $text): void {
 function current_user(): ?array {
   static $loaded = false, $user = null;
   if (!$loaded) {
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    ms_session_start();
+    if (!isset($_SESSION['user'])) {
+      $remembered = remember_user();
+      if ($remembered) $_SESSION['user'] = $remembered;
+    }
     $user = $_SESSION['user'] ?? null;
     /* ponytail: release the session file lock - API endpoints only read the
        session, and holding the lock serialized every parallel request. */

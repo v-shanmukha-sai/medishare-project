@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>MediShare Project Report</title>
+<title>MEDRED Project Report</title>
 <style>
   @page { size: A4; margin: 16mm 20mm 18mm 20mm; }
   * { box-sizing: border-box; }
@@ -27,6 +27,7 @@
   .tp-report { margin-top: 6mm; font-size: 20pt; font-weight: bold; letter-spacing: 0.5px; }
   .tp-title { margin-top: 3mm; font-size: 40pt; font-weight: bold; color: #1F4E79; letter-spacing: 1px; }
   .tp-subtitle { margin-top: 2mm; font-size: 16.5pt; font-weight: bold; color: #1F4E79; }
+  .tp-tagline { margin-top: 3mm; font-size: 12.5pt; font-style: italic; color: #1F4E79; }
   .tp-guide-title { margin-top: 5mm; font-size: 14pt; font-weight: bold; }
   .tp-rule { width: 52%; border-top: 1.6px solid #1F4E79; margin: 4mm 0 7mm; }
   .tp-submitted { font-size: 11.5pt; line-height: 1.45; margin: 0 0 5mm; }
@@ -101,8 +102,9 @@
 <!-- ================= TITLE PAGE ================= -->
 <section class="title-page">
   <div class="tp-report">PROJECT REPORT ON</div>
-  <div class="tp-title">MEDISHARE</div>
+  <div class="tp-title">MEDRED</div>
   <div class="tp-subtitle">MEDICINE DONATION AND DISTRIBUTION PLATFORM</div>
+  <div class="tp-tagline">&ldquo;Don't waste medicines, redistribute hope.&rdquo;</div>
   <div class="tp-guide-title">PROJECT REPORT &amp; TECHNICAL GUIDE</div>
   <div class="tp-rule"></div>
   <p class="tp-submitted">Submitted in partial fulfillment of the<br>requirements for the award of <strong>Diploma in</strong><br><strong>Computer Engineering.</strong></p>
@@ -134,7 +136,7 @@
   <div class="cert-head">DEPARTMENT OF COMPUTER ENGINEERING</div>
   <div class="cert-college">GOVERNMENT POLYTECHNIC WARANGAL</div>
   <h1 class="doc-title">CERTIFICATE</h1>
-  <p class="cert-body">This is to certify that this project report entitled <strong>&ldquo;MEDISHARE: MEDICINE DONATION AND DISTRIBUTION PLATFORM&rdquo;</strong> is a bonafide record of the project work carried out by the students listed below, in partial fulfillment of the requirements for the award of Diploma in Computer Engineering, during the academic session 2024&ndash;2027.</p>
+  <p class="cert-body">This is to certify that this project report entitled <strong>&ldquo;MEDRED: MEDICINE DONATION AND DISTRIBUTION PLATFORM&rdquo;</strong> is a bonafide record of the project work carried out by the students listed below, in partial fulfillment of the requirements for the award of Diploma in Computer Engineering, during the academic session 2024&ndash;2027.</p>
   <table class="cert-team">
     <tr><td>MANADI RUPA &mdash; 24004-CS-098</td></tr>
     <tr><td>DASI CHARAN KUMAR &mdash; 24004-CS-080</td></tr>
@@ -166,7 +168,7 @@
   <h1 class="doc-title">ACKNOWLEDGEMENT</h1>
   <p>We express our sincere gratitude to our project guide, <strong>S. Ravinder, M.Tech</strong>, for his guidance, valuable suggestions and encouragement throughout the development of this project. His support helped us understand the technical and practical challenges involved in building a complete medicine donation and distribution platform.</p>
   <p>We are thankful to our Principal, <strong>P. Srinivas, M.Tech</strong>, for providing the opportunity and institutional support to undertake this work. We also thank the faculty members of the Department of Computer Engineering for their assistance and feedback.</p>
-  <p>We acknowledge the open-source technologies used in the MediShare project, including PHP, PostgreSQL, Supabase, Bootstrap, Razorpay, Leaflet and Playwright. Finally, we thank our families and friends for their encouragement.</p>
+  <p>We acknowledge the open-source technologies used in the MEDRED project, including PHP, PostgreSQL, Supabase, Bootstrap, Razorpay, Leaflet and Playwright. Finally, we thank our families and friends for their encouragement.</p>
   <div class="team-title">PROJECT TEAM</div>
   <table class="team">
     <tr><td>MANADI RUPA</td><td>24004-CS-098</td></tr>
@@ -184,9 +186,9 @@
 <!-- ================= ABSTRACT ================= -->
 <section class="page">
   <h1 class="doc-title">ABSTRACT</h1>
-  <p>MediShare is a web-based medicine donation and distribution platform that connects verified medicine distributors and pharmacies with non-governmental organizations, medical shops, old-age homes, orphanages and charitable hospitals. A large quantity of usable medicine is wasted every year because distributors hold surplus or near-expiry stock while social organizations struggle to obtain medicines for the people they serve. MediShare addresses this gap with a single, verified marketplace.</p>
-  <p>The application provides role-based access for administrators, distributors and organizations. Distributors publish stock with batch number, expiry date, price and quantity. Organizations search the store, add medicines to a cart, choose a delivery address and pay through Razorpay (UPI, card or net banking) or cash on delivery. Every order passes through a controlled lifecycle: Pending Payment, Pending, Accepted, Packed, Shipped, Out for Delivery and Delivered. Stock is reserved when an order is placed and restored when it is cancelled or rejected. Expired and out-of-stock medicines are removed automatically and the distributor is notified.</p>
-  <p>The system is implemented with PHP 8 on Apache, PostgreSQL hosted on Supabase, Bootstrap 5 and vanilla JavaScript. It includes admin verification of documents, in-app notifications with an unread badge, reviews, reports with CSV export, audit logs, an email-OTP password-reset flow and performance optimizations for a hosted database. The platform was tested at the API and browser levels; all functional tests passed and cached read paths respond in milliseconds.</p>
+  <p>MEDRED is a web-based medicine donation and distribution platform that connects verified medicine distributors and pharmacies with non-governmental organizations, medical shops, old-age homes, orphanages and charitable hospitals. A large quantity of usable medicine is wasted every year because distributors hold surplus or near-expiry stock while social organizations struggle to obtain medicines for the people they serve. MEDRED, whose guiding line is &ldquo;Don't waste medicines, redistribute hope,&rdquo; addresses this gap with a single, verified marketplace.</p>
+  <p>The application provides role-based access for administrators, distributors and organizations. Distributors publish stock with batch number, expiry date, price and quantity. Organizations search the store, add medicines to a cart, choose a delivery address, enter a delivery mobile number and pay through Razorpay (UPI, card or net banking) or cash on delivery. Every order passes through a controlled lifecycle: Pending Payment, Pending, Accepted, Packed, Shipped, Out for Delivery and Delivered. Stock is reserved when an order is placed and restored when it is cancelled or rejected. Expired and out-of-stock medicines are removed automatically and the distributor is notified.</p>
+  <p>The system is implemented with PHP 8 on Apache, PostgreSQL hosted on Supabase, Supabase Storage for uploaded documents, Bootstrap 5 and vanilla JavaScript, and is packaged as a Docker image for deployment on Render. It includes admin verification of documents with complete removal of rejected registrations, in-app notifications with an unread badge, reviews, reports with CSV export that exclude soft-deleted medicines, audit logs, persistent thirty-day sign-in, an SMTP email-OTP password-reset flow, address-first delivery navigation and performance optimizations for a hosted database. The platform was tested at the API, browser and live-deployment levels; all functional tests passed and cached read paths respond in milliseconds.</p>
   <div class="keywords-title">KEYWORDS</div>
   <p class="keywords">Medicine donation &bull; Medicine redistribution &bull; E-commerce &bull; Order management &bull; Razorpay &bull; Supabase &bull; PHP &bull; PostgreSQL</p>
 </section>
@@ -220,7 +222,7 @@
 <section class="section">
   <span class="marker">[[SEC:exec]]</span>
   <h1>Executive Summary</h1>
-  <p>MediShare is a complete web application for redistributing usable medicines from verified distributors to verified social organizations. It replaces informal phone and spreadsheet coordination with a single platform that shows live stock, expiry dates, prices and order status.</p>
+  <p>MEDRED is a complete web application for redistributing usable medicines from verified distributors to verified social organizations. It replaces informal phone and spreadsheet coordination with a single platform that shows live stock, expiry dates, prices and order status.</p>
   <p>The platform has three roles. Distributors manage their medicine inventory. Organizations browse the store, place orders and pay online or choose cash on delivery. Administrators verify accounts, review uploaded documents and monitor reports and audit logs.</p>
   <p>The main outcomes of the project are:</p>
   <ul>
@@ -230,10 +232,16 @@
     <li>server-verified Razorpay payments with UPI, card and net-banking support, plus cash on delivery;</li>
     <li>in-app notifications with an unread badge;</li>
     <li>reviews, reports with CSV export and a complete audit trail;</li>
-    <li>an email-OTP password-reset flow;</li>
+    <li>reports that count only active medicines, so soft-deleted stock no longer inflates admin totals;</li>
+    <li>a delivery mobile number saved with every order and reused for navigation;</li>
+    <li>address-first navigation through Google Maps, with stored coordinates as a fallback;</li>
+    <li>a thirty-day persistent sign-in with a signed, HttpOnly remember cookie;</li>
+    <li>an SMTP email-OTP password-reset flow;</li>
+    <li>rejection of pending registrations that removes the account, profile and uploaded document;</li>
+    <li>Docker-based deployment on Render with Supabase PostgreSQL and Storage;</li>
     <li>caching and lazy database access that keep cached reads in the millisecond range.</li>
   </ul>
-  <p>The system was validated with API tests, browser tests and a role-based smoke test. All functional checks passed.</p>
+  <p>The system was validated with API tests, browser tests, a role-based smoke test and live checks on the Render deployment. All functional checks passed.</p>
 </section>
 
 <!-- ================= 1. INTRODUCTION ================= -->
@@ -242,7 +250,7 @@
   <h1>1. Introduction</h1>
   <h2>1.1 Background</h2>
   <p>Medicines are essential, time-sensitive products. Distributors and pharmacies routinely carry surplus stock, and a portion of it approaches expiry before it can be sold. At the same time, NGOs, old-age homes, orphanages, charitable hospitals and small medical shops often lack the funds and supply network to obtain even basic medicines. Much of the surplus is discarded while genuine demand remains unmet.</p>
-  <p>Most redistribution today happens through phone calls, messaging applications and personal contacts. These channels do not provide verified participants, live stock information, price transparency, order tracking, payment records or an audit trail. MediShare was built to replace this informal process with a structured digital platform.</p>
+  <p>Most redistribution today happens through phone calls, messaging applications and personal contacts. These channels do not provide verified participants, live stock information, price transparency, order tracking, payment records or an audit trail. MEDRED was built to replace this informal process with a structured digital platform.</p>
   <h2>1.2 Purpose of the Project</h2>
   <p>The purpose of the project is to design and implement a reliable, easy-to-use platform where verified distributors can list surplus or near-expiry medicines and verified organizations can order them. The project also demonstrates a complete software development cycle: requirements, design, implementation, testing and deployment.</p>
   <h2>1.3 Scope of the Report</h2>
@@ -260,7 +268,7 @@
     <li>social organizations need a simple ordering experience, not a complex enterprise system;</li>
     <li>trust is essential, so every distributor and organization must be verified before participating.</li>
   </ul>
-  <p>MediShare addresses these issues with verified accounts, a live store, a controlled order lifecycle, online payments and an audit trail.</p>
+  <p>MEDRED addresses these issues with verified accounts, a live store, a controlled order lifecycle, online payments and an audit trail.</p>
 </section>
 
 <!-- ================= 3. SCOPE & OBJECTIVES ================= -->
@@ -288,38 +296,44 @@
 <section class="section">
   <span class="marker">[[SEC:arch]]</span>
   <h1>4. System Architecture</h1>
-  <p>MediShare uses a three-tier architecture. The browser renders static pages and JavaScript modules. The application tier is a set of PHP endpoints running on Apache. The data tier is a PostgreSQL database hosted on Supabase. External services provide payments and email OTP delivery.</p>
+  <p>MEDRED uses a three-tier architecture. The browser renders static pages and JavaScript modules. The application tier is a set of PHP endpoints running under Apache in a Docker container. The data tier is a PostgreSQL database hosted on Supabase, with Supabase Storage for uploaded license and registration documents. External services provide payments and email OTP delivery.</p>
   <pre>Browser (HTML + Bootstrap + JavaScript)
         |
         |  JSON over HTTP
         v
-Apache + PHP 8 API  ---&gt;  Razorpay API (orders, payments)
-        |            ---&gt;  Supabase Auth (password-reset OTP)
+Apache + PHP 8 API (Docker on Render) ---&gt; Razorpay API (orders, payments)
+        |                             ---&gt; SMTP server (password-reset OTP)
+        |                             ---&gt; Supabase Storage (documents)
         |
         |  PDO (prepared statements)
         v
 PostgreSQL database (Supabase)</pre>
   <h2>4.1 Modules</h2>
   <ul>
-    <li><strong>Authentication and verification:</strong> registration, login, logout, sessions, document review and account approval.</li>
+    <li><strong>Authentication and verification:</strong> registration, login, logout, thirty-day persistent sessions, document review, account approval and complete removal of rejected registrations.</li>
     <li><strong>Medicine inventory:</strong> add, edit, remove, stock, expiry, batch, category, price and images.</li>
-    <li><strong>Store and cart:</strong> search, filters, cart persistence, delivery address and geolocation.</li>
-    <li><strong>Order management:</strong> order creation, grouping by distributor, status transitions, cancellation and rejection.</li>
+    <li><strong>Store and cart:</strong> search, filters, cart persistence, delivery address, delivery mobile number and geolocation.</li>
+    <li><strong>Order management:</strong> order creation, grouping by distributor, status transitions, cancellation, rejection and delivery navigation.</li>
     <li><strong>Payments:</strong> Razorpay order creation and signature verification, cash on delivery and payment status.</li>
     <li><strong>Notifications:</strong> in-app notifications, unread badge and periodic refresh.</li>
     <li><strong>Reviews:</strong> one review per delivered order with rating and comment.</li>
-    <li><strong>Reports and audit:</strong> revenue and order statistics, CSV export and activity log.</li>
-    <li><strong>Password reset:</strong> email OTP, reset token and password update.</li>
-    <li><strong>Profile and map:</strong> profile updates, delivery location and a public map page.</li>
+    <li><strong>Reports and audit:</strong> revenue and order statistics that ignore soft-deleted medicines, CSV export and activity log.</li>
+    <li><strong>Password reset:</strong> SMTP email OTP, reset token and password update.</li>
+    <li><strong>Profile and map:</strong> profile updates, delivery location and a public map page with address-first directions.</li>
   </ul>
-  <h2>4.2 Design Principles</h2>
+  <h2 style="page-break-before: always;">4.2 Design Principles</h2>
   <ul>
     <li>Role-based access is enforced on the server, not only in the interface.</li>
     <li>Every write that affects stock runs inside a database transaction.</li>
     <li>Payment confirmation depends on a verified gateway signature.</li>
     <li>Read-heavy responses are cached briefly and invalidated on writes.</li>
-    <li>Removed medicines are soft-deleted so historical orders remain intact.</li>
+    <li>Removed medicines are soft-deleted so historical orders remain intact, while reports and admin counts filter them out.</li>
+    <li>The delivery address is the primary navigation target; stored coordinates are only a fallback.</li>
+    <li>Account, document and session secrets stay in server-side environment variables.</li>
   </ul>
+  <h2>4.3 Deployment</h2>
+  <p>The application is packaged with a <code>Dockerfile</code> based on <code>php:8.2-apache</code>, with the required PDO PostgreSQL, cURL and fileinfo extensions enabled. Docker Compose provides a local development option. Production runs as a Docker web service on Render, connected to Supabase PostgreSQL and Storage. Configuration is supplied through environment variables, while <code>config/secrets.php</code> remains a local-only fallback. A lightweight <code>health.php</code> endpoint serves as the platform health check.</p>
+  <p>Uploaded documents are stored in Supabase Storage in production and on the local filesystem during development. The storage layer exposes the same helpers in both modes, so registration, verification and rejection behave identically. Render supplies HTTPS, which enables secure, SameSite session and remember cookies automatically.</p>
 </section>
 
 <!-- ================= 5. TECHNICAL STACK ================= -->
@@ -334,16 +348,18 @@ PostgreSQL database (Supabase)</pre>
       <tr><td>Back end</td><td>PHP 8.2</td><td>REST-style JSON endpoints, sessions, business logic</td></tr>
       <tr><td>Database</td><td>PostgreSQL 15 on Supabase</td><td>Persistent relational data</td></tr>
       <tr><td>Database access</td><td>PDO with prepared statements</td><td>Safe, parameterized queries</td></tr>
+      <tr><td>File storage</td><td>Supabase Storage (production), local filesystem (development)</td><td>License and registration documents</td></tr>
       <tr><td>Payments</td><td>Razorpay (test mode)</td><td>UPI, card and net-banking payments</td></tr>
-      <tr><td>OTP email</td><td>Supabase Auth</td><td>Password-reset one-time passwords</td></tr>
-      <tr><td>Maps</td><td>Leaflet, OpenStreetMap, Google Maps links</td><td>Location display and directions</td></tr>
-      <tr><td>Web server</td><td>Apache (XAMPP)</td><td>Hosting the PHP application</td></tr>
+      <tr><td>OTP email</td><td>SMTP (PHP socket client)</td><td>Password-reset one-time passwords</td></tr>
+      <tr><td>Maps</td><td>Leaflet, OpenStreetMap, Google Maps links</td><td>Location display and address-first directions</td></tr>
+      <tr><td>Web server</td><td>Apache on Docker (Render), XAMPP locally</td><td>Hosting the PHP application</td></tr>
+      <tr><td>Hosting</td><td>Render Docker web service, Singapore region</td><td>Public HTTPS deployment</td></tr>
       <tr><td>Version control</td><td>Git and GitHub</td><td>Source control and collaboration</td></tr>
-      <tr><td>Testing</td><td>PHP cURL tests, Playwright</td><td>API and browser validation</td></tr>
+      <tr><td>Testing</td><td>PHP cURL tests, Playwright, live API checks</td><td>API, browser and deployment validation</td></tr>
     </tbody>
   </table>
   <h2>5.1 Why This Stack</h2>
-  <p>PHP and PostgreSQL are widely available, well documented and suitable for a data-driven web application. Supabase provides a managed PostgreSQL instance without server administration. Bootstrap keeps the interface consistent and responsive. Razorpay offers a straightforward test-mode integration. Playwright provides reliable end-to-end browser testing.</p>
+  <p>PHP and PostgreSQL are widely available, well documented and suitable for a data-driven web application. Supabase provides managed PostgreSQL and object storage without server administration. Bootstrap keeps the interface consistent and responsive. Razorpay offers a straightforward test-mode integration. Docker makes the runtime reproducible on Render, and Playwright provides reliable end-to-end browser testing.</p>
 </section>
 
 <!-- ================= 6. DATABASE DESIGN ================= -->
@@ -358,7 +374,7 @@ PostgreSQL database (Supabase)</pre>
       <tr><td><code>distributors</code></td><td>user_id, license number, license image</td><td>Distributor profile</td></tr>
       <tr><td><code>ngos</code></td><td>user_id, registration number, registration image</td><td>Organization profile</td></tr>
       <tr><td><code>medicines</code></td><td>name, category, price, MRP, stock, batch, expiry, shelf life, image, distributor, deleted, low-stock flag</td><td>Inventory</td></tr>
-      <tr><td><code>orders</code></td><td>organization, distributor, delivery address, coordinates, total, status, tracking number, timestamps</td><td>Order header</td></tr>
+      <tr><td><code>orders</code></td><td>organization, distributor, delivery address, delivery mobile, coordinates, total, status, tracking number, timestamps</td><td>Order header</td></tr>
       <tr><td><code>order_items</code></td><td>order, medicine, quantity, price</td><td>Order line items</td></tr>
       <tr><td><code>transactions</code></td><td>order, amount, method, status, gateway reference</td><td>Payment record</td></tr>
       <tr><td><code>notifications</code></td><td>user, type, text, read status, timestamp</td><td>User notifications</td></tr>
@@ -375,7 +391,8 @@ PostgreSQL database (Supabase)</pre>
     <li>One delivered order can have one review.</li>
   </ul>
   <h2>6.2 Design Notes</h2>
-  <p>Medicine rows use a soft-delete flag because order items reference them. Prices are copied into order items at the time of ordering so later price changes do not alter historical orders. Order totals are computed on the server. Status values are constrained so that only valid lifecycle states can be stored.</p>
+  <p>Medicine rows use a soft-delete flag because order items reference them. Report and dashboard queries filter on <code>deleted = 0</code>, so removed medicines do not inflate live totals. Prices are copied into order items at the time of ordering so later price changes do not alter historical orders. Order totals are computed on the server. Status values are constrained so that only valid lifecycle states can be stored.</p>
+  <p>The delivery mobile number was added as an additive migration, <code>ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_phone VARCHAR(15)</code>. It is nullable for historical orders and validated as exactly ten digits for new orders. Rejected registrations are hard-deleted with their dependent notifications, audit entries, role profile and user row, while license documents are removed through the storage helper.</p>
 </section>
 
 <!-- ================= 7. IMPLEMENTATION ================= -->
@@ -383,35 +400,42 @@ PostgreSQL database (Supabase)</pre>
   <span class="marker">[[SEC:impl]]</span>
   <h1>7. Implementation</h1>
   <h2>7.1 Authentication and Role Management</h2>
-  <p>Registration collects the user's name, email, password, phone, address, city, coordinates, role and, for distributors and organizations, license or registration details and an uploaded document. Passwords are stored with <code>password_hash()</code> and verified with <code>password_verify()</code>. A successful login regenerates the session ID and stores the user's identity in the PHP session. Protected endpoints call a shared role check, and the dashboard hides tabs that are not allowed for the current role.</p>
+  <p>Registration collects the user's name, email, password, phone, address, city, coordinates, role and, for distributors and organizations, license or registration details and an uploaded document. Phone numbers are normalised to digits and must contain exactly ten digits. Passwords are stored with <code>password_hash()</code> and verified with <code>password_verify()</code>. A successful login regenerates the session ID and stores the user's identity in the PHP session. Protected endpoints call a shared role check, and the dashboard hides tabs that are not allowed for the current role.</p>
+  <p>Sign-in is persistent for thirty days. Alongside the session cookie, the server issues a signed <code>medred_remember</code> cookie containing the user, password-hash fingerprint and expiry. The value is protected with an HMAC derived from <code>RESET_SECRET</code>, marked HttpOnly and SameSite=Lax, and is only issued over HTTPS as Secure. <code>current_user()</code> can restore a session from this cookie, while logout, expiry or a password change invalidates it. This keeps users signed in across browser restarts without storing a password or a reusable server-side token.</p>
   <h2>7.2 Admin Verification and Documents</h2>
-  <p>New distributor and organization accounts remain unverified until an administrator approves them. The verification page lists pending accounts and shows a thumbnail of the uploaded document, which opens the full image in a new tab. Approve and reject actions are written to the audit log.</p>
+  <p>New distributor and organization accounts remain unverified until an administrator approves them. The verification page lists pending accounts and shows a thumbnail of the uploaded document, which opens the full image in a new tab. Approve and reject actions are written to the audit log. Rejection is destructive by design: after confirming the action, the server removes the pending user's notifications, audit entries, distributor or organization profile and user row, and deletes the uploaded license document through the storage helper. Rejected accounts therefore disappear from the pending queue and cannot be approved accidentally later.</p>
   <h2>7.3 Medicine Inventory</h2>
   <p>Distributors add medicines with name, category, price, MRP, stock, batch number, expiry date, shelf life and image. Existing medicines can be edited. Removal uses a soft-delete flag so past orders and invoices remain intact. When stock reaches zero, the medicine is removed from the store and the distributor is notified. Expired medicines and out-of-stock medicines are also removed automatically when the store is loaded, and a low-stock notification is generated below the configured threshold.</p>
   <h2>7.4 Store, Cart and Geolocation</h2>
-  <p>The store shows available medicines with distributor name, category, price, stock, expiry and shelf life. Users can search by name and filter by category, remaining shelf life and distributor. The cart is stored in the browser so it survives page reloads. Delivery location is captured through the browser geolocation API and stored in a cookie; if permission is denied, checkout proceeds with the delivery address alone.</p>
+  <p>The store shows available medicines with distributor name, category, price, stock, expiry and shelf life. Users can search by name and filter by category, remaining shelf life and distributor. The cart is stored in the browser so it survives page reloads. Checkout now captures a delivery mobile number immediately after the delivery address. The input accepts digits only, enforces ten digits on the client and on the server, and remembers the last value in a cookie so repeat orders are faster. Delivery location is captured through the browser geolocation API and stored in a cookie; if permission is denied, checkout proceeds with the delivery address and mobile number alone.</p>
   <h2>7.5 Order Management</h2>
-  <p>When an order is placed, the server validates each medicine, checks expiry and stock, deducts the ordered quantity, groups items by distributor and creates one order per distributor. The minimum order value is &#8377;500 per distributor. The order, its line items and its transaction are written inside a database transaction. Organizations can cancel an order while it is Pending or Pending Payment; the cancellation restores reserved stock and marks the transaction as Cancelled. Distributors can reject pending orders, which also restores stock.</p>
+  <p>When an order is placed, the server validates each medicine, checks expiry and stock, deducts the ordered quantity, groups items by distributor and creates one order per distributor. The delivery mobile number is validated and stored in <code>orders.delivery_phone</code>; invalid numbers are rejected before any stock is touched. The minimum order value is &#8377;500 per distributor. The order, its line items and its transaction are written inside a database transaction. Organizations can cancel an order while it is Pending or Pending Payment; the cancellation restores reserved stock and marks the transaction as Cancelled. Distributors can reject pending orders, which also restores stock.</p>
+  <p>Each order row and the delivery map display the saved mobile number. The Navigate action opens Google Maps with the delivery address as the destination, and uses stored latitude and longitude only when the address is missing. This avoids relying on geocoding services and lets the driver use the address the organization actually entered.</p>
   <h2>7.6 Notifications, Reviews and Reports</h2>
-  <p>Notifications are stored in the database with a type, text and read status. They are generated for new orders, payment confirmation, acceptance, rejection, cancellation, delivery, low stock and expiry. The navigation bar shows an unread-count badge refreshed every 60 seconds. Organizations can review a delivered order once, with a rating and an optional comment. Reports show revenue, order counts, medicine counts and stock distribution, with CSV export. The audit log records sensitive actions with the user and timestamp.</p>
+  <p>Notifications are stored in the database with a type, text and read status. They are generated for new orders, payment confirmation, acceptance, rejection, cancellation, delivery, low stock and expiry. The navigation bar shows an unread-count badge refreshed every 60 seconds, and the dashboard refreshes its own badge every 30 seconds after the page loads. Organizations can review a delivered order once, with a rating and an optional comment. Reports show revenue, order counts, medicine counts and stock distribution, with CSV export. All report totals, category breakdowns and low-stock or expiry-risk counts filter out soft-deleted medicines, so administrators see active inventory only. The audit log records sensitive actions with the user and timestamp.</p>
   <h2>7.7 Module-to-File Mapping</h2>
   <table class="data">
     <thead><tr><th>Module</th><th>Main Files</th></tr></thead>
     <tbody>
-      <tr><td>Authentication</td><td><code>auth/login.php</code>, <code>logout.php</code>, <code>session.php</code>, <code>register.php</code></td></tr>
+      <tr><td>Authentication</td><td><code>auth/login.php</code>, <code>logout.php</code>, <code>session.php</code>, <code>register.php</code>, <code>config/db.php</code></td></tr>
       <tr><td>Password reset</td><td><code>forgot-password.html</code>, <code>auth/forgot.php</code></td></tr>
       <tr><td>Dashboard</td><td><code>dashboard.html</code>, <code>js/app.js</code></td></tr>
       <tr><td>Medicine inventory</td><td><code>api/medicines.php</code></td></tr>
-      <tr><td>Store and cart</td><td><code>index.html</code>, <code>js/app.js</code></td></tr>
-      <tr><td>Orders</td><td><code>api/orders.php</code></td></tr>
+      <tr><td>Store and cart</td><td><code>index.html</code>, <code>js/app.js</code>, <code>js/store.js</code></td></tr>
+      <tr><td>Orders</td><td><code>api/orders.php</code>, <code>js/cart.js</code></td></tr>
       <tr><td>Payments</td><td><code>api/payment.php</code></td></tr>
       <tr><td>Notifications</td><td><code>api/notifications.php</code></td></tr>
-      <tr><td>Verification</td><td><code>api/verify.php</code></td></tr>
+      <tr><td>Verification</td><td><code>api/verify.php</code>, <code>config/storage.php</code></td></tr>
       <tr><td>Reports and audit</td><td><code>api/reports.php</code>, <code>api/audit.php</code></td></tr>
       <tr><td>Reviews and profile</td><td><code>api/reviews.php</code>, <code>api/profile.php</code></td></tr>
-      <tr><td>Map</td><td><code>map.html</code>, <code>api/locations.php</code></td></tr>
+      <tr><td>Map and delivery</td><td><code>map.html</code>, <code>delivery-map.html</code>, <code>api/locations.php</code></td></tr>
+      <tr><td>Deployment</td><td><code>Dockerfile</code>, <code>docker/</code>, <code>health.php</code>, <code>scripts/migrate-uploads.php</code></td></tr>
     </tbody>
   </table>
+  <h2>7.8 Password Reset over SMTP</h2>
+  <p>The reset flow is implemented without a third-party authentication service. A six-digit OTP is generated on the server, stored as a short-lived hash associated with the account, and sent by the built-in SMTP client. Verification is limited to five attempts, and a successful check issues a signed, expiring reset token. In development, when SMTP is not configured, the OTP is written to a temporary log instead of being emailed; in production, a missing SMTP configuration returns a clear service-unavailable response rather than silently failing.</p>
+  <h2>7.9 Branding and Interface</h2>
+  <p>The product is branded MEDRED throughout, with the line &ldquo;Don't waste medicines, redistribute hope.&rdquo; The home page uses the new hero image and logo, the navigation and footer carry the same identity, and page titles, favicons, invoices, emails and error messages were updated consistently. The changes preserve the existing layout and workflows; no feature was removed or redesigned.</p>
 </section>
 
 <!-- ================= 8. ORDER LIFECYCLE & PAYMENTS ================= -->
@@ -447,15 +471,18 @@ Pending --(distributor rejects)--&gt; Cancelled</pre>
     <li>session ID regeneration after login;</li>
     <li>HMAC-SHA256 verification of Razorpay payments with a timing-safe comparison;</li>
     <li>HMAC-signed, expiring password-reset tokens;</li>
+    <li>a signed, HttpOnly, SameSite=Lax, Secure-on-HTTPS remember cookie whose signature covers the user, expiry and password-hash fingerprint;</li>
     <li>generic responses for unknown email addresses to prevent account enumeration;</li>
-    <li>a five-attempt limit on OTP verification;</li>
+    <li>a five-attempt limit on OTP verification and single-use OTP records;</li>
+    <li>SMTP credentials supplied only through server-side configuration;</li>
+    <li>rejected-registration cleanup that removes the user, role profile, notifications and audit rows and deletes the uploaded document;</li>
     <li><code>.htaccess</code> denies for the configuration and log folders;</li>
     <li>PHP execution blocked inside the uploads folder;</li>
-    <li>credentials stored in <code>config/secrets.php</code>, which is excluded from Git;</li>
+    <li>credentials stored in environment variables or <code>config/secrets.php</code>, both excluded from Git;</li>
     <li>user-uploaded license documents and logs excluded from Git;</li>
     <li>audit logging of sensitive actions.</li>
   </ul>
-  <p>The password-reset flow sends a 6-digit OTP through Supabase Auth, verifies it on the server, and issues a short-lived reset token. The new password is hashed before storage.</p>
+  <p>The password-reset flow sends a six-digit OTP through the application's SMTP client, verifies it on the server, and issues a short-lived reset token. The new password is hashed before storage. The OTP is never returned by the API; only the development fallback writes it to a local temporary log when SMTP is absent.</p>
 </section>
 
 <!-- ================= 10. PERFORMANCE ================= -->
@@ -511,9 +538,16 @@ Pending --(distributor rejects)--&gt; Cancelled</pre>
       <tr><td>18</td><td>Password reset with a valid token</td><td>Password updated; login works</td><td>Pass</td></tr>
       <tr><td>19</td><td>Reuse of a used OTP</td><td>Rejected</td><td>Pass</td></tr>
       <tr><td>20</td><td>Tab access outside the user's role</td><td>Tab hidden; API returns 403</td><td>Pass</td></tr>
+      <tr><td>21</td><td>Admin dashboard totals after soft-deleting medicines</td><td>Active totals exclude deleted rows; all-time total remains available</td><td>Pass</td></tr>
+      <tr><td>22</td><td>Admin rejects a pending registration</td><td>User, profile, notifications, audit rows and uploaded document removed</td><td>Pass</td></tr>
+      <tr><td>23</td><td>Checkout with a nine-digit or alphabetic mobile number</td><td>422 response; no order or stock change</td><td>Pass</td></tr>
+      <tr><td>24</td><td>Checkout with a valid ten-digit mobile number</td><td>Number stored on the order and shown in dashboard and map</td><td>Pass</td></tr>
+      <tr><td>25</td><td>Navigate to an order with an address and coordinates</td><td>Google Maps opens with the address as destination</td><td>Pass</td></tr>
+      <tr><td>26</td><td>Return to the app after the browser session ends</td><td>Signed remember cookie restores the session; logout invalidates it</td><td>Pass</td></tr>
+      <tr><td>27</td><td>Password reset request and OTP verification in development</td><td>OTP written to the temporary log; valid token issued</td><td>Pass</td></tr>
     </tbody>
   </table>
-  <p>All API and UI test suites passed. The smoke test rendered every role's tabs with zero JavaScript errors; the only console messages were expected 401 responses for guests. Test data was removed after the runs.</p>
+  <p>All API and UI test suites passed. The smoke test rendered every role's tabs with zero JavaScript errors; the only console messages were expected 401 responses for guests. Live API checks on the Render deployment confirmed the health endpoint, database connection, authentication and report totals. Production email delivery remains dependent on SMTP credentials being configured in the hosting environment. Test data was removed after the runs.</p>
 </section>
 
 <!-- ================= 12. LIMITATIONS & FUTURE ================= -->
@@ -522,17 +556,18 @@ Pending --(distributor rejects)--&gt; Cancelled</pre>
   <h1>12. Limitations &amp; Future Work</h1>
   <h2>12.1 Limitations</h2>
   <ul>
-    <li>Email and SMS delivery require external configuration; email is disabled by default and SMS is a stub.</li>
+    <li>Email delivery requires SMTP credentials in the hosting environment; SMS remains a stub.</li>
+    <li>District, state and PIN code are not yet separate structured fields.</li>
     <li>Razorpay is used in test mode; live payments require live keys and compliance checks.</li>
     <li>There is no integration with courier or delivery-partner APIs.</li>
-    <li>Geolocation depends on browser permission and may be inaccurate.</li>
+    <li>Geolocation depends on browser permission and may be inaccurate; navigation therefore prefers the typed address.</li>
     <li>The application is a responsive web app, not a native mobile app.</li>
-    <li>The hosted database adds network latency to cold requests.</li>
+    <li>The hosted database and free Render instance add latency to cold requests and may spin down when idle.</li>
     <li>Admin verification is manual, and the interface is available in English only.</li>
   </ul>
   <h2>12.2 Future Work</h2>
   <ul>
-    <li>Enable live Razorpay payments and configure SMTP for real email delivery.</li>
+    <li>Provide production SMTP credentials and enable live Razorpay payments.</li>
     <li>Integrate an SMS gateway such as Twilio or MSG91.</li>
     <li>Add delivery-partner tracking and route optimization.</li>
     <li>Add barcode or QR scanning for medicine batches.</li>
@@ -548,8 +583,8 @@ Pending --(distributor rejects)--&gt; Cancelled</pre>
   <span class="marker">[[SEC:conclusion]]</span>
   <h1>13. Conclusion &amp; References</h1>
   <h2>13.1 Conclusion</h2>
-  <p>MediShare demonstrates how a focused web application can reduce medicine wastage and improve access for social organizations. The project covers the complete operational cycle: registration, verification, inventory, store, cart, payment, order tracking, cancellation, notifications, reviews, reports and password recovery.</p>
-  <p>The implementation emphasizes correctness at trust boundaries: verified accounts, server-side payment verification, transactional stock handling, role-based authorization and audit logging. Caching and lazy database access keep the interface responsive despite a hosted database. The system is ready for extension with live payment credentials, real email and SMS delivery, and delivery-partner integration.</p>
+  <p>MEDRED demonstrates how a focused web application can reduce medicine wastage and improve access for social organizations. The project covers the complete operational cycle: registration, verification, inventory, store, cart, delivery details, payment, order tracking, cancellation, notifications, reviews, reports, persistent sign-in and password recovery.</p>
+  <p>The implementation emphasizes correctness at trust boundaries: verified accounts, complete cleanup of rejected registrations, server-side payment verification, transactional stock handling, role-based authorization, signed sessions and audit logging. Reports now reflect active inventory only, delivery navigation follows the address the organization entered, and the Docker image runs consistently on Render. Caching and lazy database access keep the interface responsive despite a hosted database. The system is ready for extension with production SMTP credentials, live payment credentials and delivery-partner integration.</p>
   <h2>13.2 References</h2>
   <ol class="refs">
     <li>PHP Documentation &mdash; https://www.php.net/docs.php</li>
@@ -571,11 +606,13 @@ Pending --(distributor rejects)--&gt; Cancelled</pre>
   <h1>Appendix &mdash; Setup &amp; API Reference</h1>
   <h2>A. Setup Instructions</h2>
   <ol>
-    <li>Install XAMPP with PHP 8.2 and enable the <code>pdo_pgsql</code> and <code>curl</code> extensions.</li>
-    <li>Import <code>database.sql</code> into a PostgreSQL or Supabase database.</li>
-    <li>Copy <code>config/secrets.example.php</code> to <code>config/secrets.php</code> and fill in the database, Razorpay and Supabase values.</li>
+    <li>Install XAMPP with PHP 8.2 and enable the <code>pdo_pgsql</code>, <code>curl</code> and <code>fileinfo</code> extensions.</li>
+    <li>Import <code>database.sql</code> into a PostgreSQL or Supabase database. Existing databases need <code>ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_phone VARCHAR(15);</code></li>
+    <li>Copy <code>config/secrets.example.php</code> to <code>config/secrets.php</code> and fill in the database, Razorpay, Supabase and SMTP values.</li>
     <li>Place the project under the Apache document root and open <code>index.html</code>.</li>
-    <li>For password-reset email, add <code>{{ .Token }}</code> to the Magic Link template in Supabase Authentication &rarr; Email Templates.</li>
+    <li>For password-reset email, set <code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_SECURE</code>, <code>SMTP_USER</code>, <code>SMTP_PASS</code> and <code>SMTP_FROM</code>. Without SMTP, development writes the OTP to <code>%TEMP%/medred_otp.log</code>; production returns a configuration error.</li>
+    <li>For Docker, run <code>docker compose up --build</code> with <code>.env</code> present, or deploy the repository as a Docker web service on Render and add the same environment variables in the dashboard.</li>
+    <li>Set the Render health check path to <code>/health.php</code> and confirm the service reports a healthy database connection.</li>
   </ol>
   <h2>B. Seed Accounts</h2>
   <p class="small">All seed accounts use the password <code>admin123</code>.</p>
@@ -590,14 +627,17 @@ Pending --(distributor rejects)--&gt; Cancelled</pre>
     </tbody>
   </table>
   <h2>C. Configuration Keys</h2>
-  <p class="small">All values are stored in <code>config/secrets.php</code>, which is excluded from version control.</p>
+  <p class="small">Values are supplied as environment variables in Docker and Render, or through <code>config/secrets.php</code> locally; neither secrets file is committed.</p>
   <table class="data">
-    <thead><tr><th>Constant</th><th>Purpose</th></tr></thead>
+    <thead><tr><th>Variable</th><th>Purpose</th></tr></thead>
     <tbody>
       <tr><td><code>DB_DSN</code>, <code>DB_USER</code>, <code>DB_PASS</code></td><td>PostgreSQL connection</td></tr>
+      <tr><td><code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code></td><td>Supabase Storage for uploaded documents</td></tr>
       <tr><td><code>RAZORPAY_KEY_ID</code>, <code>RAZORPAY_KEY_SECRET</code></td><td>Payment gateway credentials</td></tr>
-      <tr><td><code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code></td><td>Supabase Auth for password-reset OTP</td></tr>
-      <tr><td><code>RESET_SECRET</code></td><td>Signing key for reset tokens</td></tr>
+      <tr><td><code>RESET_SECRET</code></td><td>Signing key for reset tokens and remember cookies</td></tr>
+      <tr><td><code>SMTP_HOST</code>, <code>SMTP_PORT</code>, <code>SMTP_SECURE</code>, <code>SMTP_USER</code>, <code>SMTP_PASS</code>, <code>SMTP_FROM</code></td><td>Password-reset and notification email</td></tr>
+      <tr><td><code>MEDRED_EMAIL</code></td><td>Enables notification email when set to true</td></tr>
+      <tr><td><code>APP_ENV</code></td><td>Set to <code>production</code> on Render; enables the OTP log fallback only in development</td></tr>
     </tbody>
   </table>
   <h2 style="page-break-before: always; margin-top: 0;">D. API Endpoints</h2>
@@ -608,16 +648,17 @@ Pending --(distributor rejects)--&gt; Cancelled</pre>
       <tr><td><code>auth/register.php</code></td><td>Registration with document upload</td></tr>
       <tr><td><code>auth/forgot.php</code></td><td>Password-reset OTP request, verification and reset</td></tr>
       <tr><td><code>api/medicines.php</code></td><td>Medicine list, details, add, edit, remove</td></tr>
-      <tr><td><code>api/orders.php</code></td><td>Order creation, status actions, cancellation, list</td></tr>
+      <tr><td><code>api/orders.php</code></td><td>Order creation with delivery mobile, status actions, cancellation, list</td></tr>
       <tr><td><code>api/payment.php</code></td><td>Razorpay order creation and verification</td></tr>
       <tr><td><code>api/notifications.php</code></td><td>List and mark notifications as read</td></tr>
-      <tr><td><code>api/verify.php</code></td><td>Admin approval of accounts</td></tr>
+      <tr><td><code>api/verify.php</code></td><td>Admin approval, or rejection with complete registration cleanup</td></tr>
       <tr><td><code>api/distributors.php</code></td><td>Distributor profiles and admin list</td></tr>
       <tr><td><code>api/reviews.php</code></td><td>Reviews for delivered orders</td></tr>
       <tr><td><code>api/reports.php</code></td><td>Statistics and CSV export</td></tr>
       <tr><td><code>api/audit.php</code></td><td>Audit log</td></tr>
       <tr><td><code>api/profile.php</code></td><td>Profile update</td></tr>
       <tr><td><code>api/locations.php</code></td><td>Verified locations for the map</td></tr>
+      <tr><td><code>health.php</code></td><td>Deployment health check with database connectivity</td></tr>
     </tbody>
   </table>
   <p class="small" style="margin-top:8mm; text-align:center;"><em>End of Report</em></p>

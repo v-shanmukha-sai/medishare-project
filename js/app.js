@@ -1,4 +1,4 @@
-/* MedShare frontend - talks to the PHP API (no mock data). */
+/* MEDRED frontend - talks to the PHP API (no mock data). */
 (function () {
   const isDashboard = location.pathname.endsWith('dashboard.html');
   const $ = s => document.querySelector(s);
@@ -39,6 +39,7 @@
     });
 
     if (registerForm) {
+      $('#phone')?.addEventListener('input', e => { e.target.value = digitsOnly(e.target.value); });
       if (new URLSearchParams(location.search).get('role') === 'distributor') $('#r-dist').checked = true;
       const syncRoleFields = () => {
         const org = document.querySelector('input[name="role"]:checked').value === 'org';
@@ -269,7 +270,7 @@
     const rows = (window._ordersData || []).map(o => `
       <tr><td>#${o.id}</td><td>${o.items}</td><td>${money(o.total)}</td>
       <td>${o.buyer}</td><td class="text-nowrap small">${o.distributor_name || '—'}</td>
-      <td class="text-nowrap small">${o.delivery_address || '—'}</td>
+      <td class="text-nowrap small">${o.delivery_address || '—'}${o.delivery_phone ? `<br><span class="text-secondary">${o.delivery_phone}</span>` : ''}</td>
       <td class="text-nowrap small">${o.tracking_number || '—'}</td>
       <td><span class="badge ${badge(o.status)}">${o.status}</span></td>
       <td><span class="badge ${o.payment_status === 'Completed' ? 'bg-success' : o.payment_status === 'Failed' ? 'bg-danger' : 'bg-warning text-dark'}">${o.payment_status}</span></td>
@@ -283,8 +284,8 @@
           <button class="btn btn-sm btn-primary btn-pack" data-id="${o.id}"><i class="bi bi-box-seam"></i> Pack</button>` : ''}
         ${user.role === 'distributor' && o.status === 'Packed' ? `
           <button class="btn btn-sm btn-primary btn-ship" data-id="${o.id}"><i class="bi bi-truck"></i> Ship</button>` : ''}
-        ${(user.role === 'distributor' && ['Accepted', 'Packed', 'Shipped', 'Out for Delivery'].includes(o.status) && o.org_lat && o.org_lng) ? `
-          <button class="btn btn-sm btn-outline-info btn-map" data-id="${o.id}" data-lat="${o.org_lat}" data-lng="${o.org_lng}" data-name="${o.buyer}" data-addr="${o.delivery_address || ''}"><i class="bi bi-geo-alt"></i> Navigate</button>` : ''}
+        ${(user.role === 'distributor' && ['Accepted', 'Packed', 'Shipped', 'Out for Delivery'].includes(o.status) && (o.delivery_address || (o.org_lat && o.org_lng))) ? `
+          <button class="btn btn-sm btn-outline-info btn-map" data-id="${o.id}" data-lat="${o.org_lat || ''}" data-lng="${o.org_lng || ''}" data-name="${o.buyer}" data-addr="${o.delivery_address || ''}" data-phone="${o.delivery_phone || ''}"><i class="bi bi-geo-alt"></i> Navigate</button>` : ''}
         ${user.role === 'distributor' && o.status === 'Shipped' ? `
           <button class="btn btn-sm btn-outline-primary btn-ofd" data-id="${o.id}"><i class="bi bi-send"></i> Out for Delivery</button>` : ''}
         ${user.role === 'distributor' && o.status === 'Out for Delivery' ? `
@@ -330,7 +331,8 @@
       data.locations.forEach(p => {
         const iconColor = p.role === 'distributor' ? '#0B5C4E' : '#198754';
         const marker = L.marker([p.lat, p.lng]).addTo(group);
-        marker.bindPopup(`<b>${p.name}</b><br>${p.address || 'Address not provided'}<br>${p.city || ''}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" class="btn btn-sm btn-primary mt-1">Directions</a>`);
+        const dest = p.address ? `${p.address}${p.city ? ', ' + p.city : ''}` : `${p.lat},${p.lng}`;
+        marker.bindPopup(`<b>${p.name}</b><br>${p.address || 'Address not provided'}<br>${p.city || ''}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}" target="_blank" class="btn btn-sm btn-primary mt-1">Directions</a>`);
       });
       if (data.locations.length) map.fitBounds(group.getBounds().pad(0.2));
       else map.setView([17.3850, 78.4867], 11);
@@ -395,6 +397,8 @@
         <p class="small text-secondary mb-3">${m.distributor} &middot; ${money(m.price)}/unit &middot; stock: ${m.stock} &middot; expires ${m.expiry}</p>
         <label class="form-label">Delivery address</label>
         <input type="text" class="form-control mb-2" id="orderAddress" placeholder="House, street, city, PIN">
+        <label class="form-label">Mobile number</label>
+        <input type="tel" class="form-control mb-2" id="orderPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number">
         <label class="form-label">Quantity</label>
         <input type="number" class="form-control mb-2" id="orderQty" min="1" max="${m.stock}" value="1">
         <div class="small text-secondary mb-3">Total: <span id="orderTotal">${money(m.price)}</span></div>
@@ -408,6 +412,8 @@
         <div class="small text-secondary mb-3">Minimum order: ${money(500)} per distributor.</div>
         <button class="btn btn-primary w-100" id="confirmOrder">Place Order</button>`;
       $('#orderAddress').value = savedAddress(user.address);
+      $('#orderPhone').value = savedPhone(user.phone);
+      $('#orderPhone').oninput = e => { e.target.value = digitsOnly(e.target.value); };
       $('#orderQty').oninput = () => $('#orderTotal').textContent = money(m.price * Math.max(1, $('#orderQty').value));
       bootstrap.Modal.getOrCreateInstance($('#orderModal')).show();
     }
@@ -441,14 +447,17 @@
       fd.append('action', 'delete');
       fd.append('id', delMedBtn.dataset.id);
       const res = await (await fetch('api/medicines.php', { method: 'POST', body: fd })).json();
-      if (res.ok) { toast('Medicine removed'); cacheDrop('api/medicines.php'); renderMedTable(); }
+      if (res.ok) { toast('Medicine removed'); cacheDrop('api/medicines.php'); cacheDrop('api/reports.php'); renderMedTable(); }
       else { toast(res.error, 'danger'); delMedBtn.disabled = false; }
     }
     const vBtn = e.target.closest('.btn-verify');
     if (vBtn) {
+      if (vBtn.dataset.action === 'reject' && !confirm('Reject and remove this registration? The user will have to register again.')) return;
       vBtn.disabled = true;
       const res = await post('api/verify.php', { user_id: +vBtn.dataset.id, action: vBtn.dataset.action });
       if (res.ok) {
+        cacheDrop('api/verify.php');
+        cacheDrop('api/distributors.php');
         toast(vBtn.dataset.action === 'approve' ? 'Account approved' : 'Account rejected');
         show($('#pageTitle').textContent === 'Distributors' ? 'distributors' : 'verify');
       } else { toast(res.error, 'danger'); vBtn.disabled = false; }
@@ -519,6 +528,7 @@
       const res = await post('api/payment.php', { order_id: +payBtn.dataset.id, status: 'Completed' });
       if (res.ok) {
         toast('Payment confirmed');
+        cacheDrop('api/reports.php');
         const o = (window._ordersData || []).find(x => x.id === +payBtn.dataset.id);
         if (o) o.payment_status = 'Completed';
         cachePut('api/orders.php', { orders: window._ordersData });
@@ -561,7 +571,8 @@
       const lat = +mapBtn.dataset.lat, lng = +mapBtn.dataset.lng;
       const name = mapBtn.dataset.name;
       const addr = mapBtn.dataset.addr;
-      localStorage.setItem('deliveryMap', JSON.stringify({ lat, lng, name, addr }));
+      const phone = mapBtn.dataset.phone;
+      localStorage.setItem('deliveryMap', JSON.stringify({ lat, lng, name, addr, phone }));
       location.href = 'delivery-map.html';
     }
   });
@@ -576,13 +587,16 @@
     if (m.price * qty < 500) { toast(`Minimum order is ${money(500)} per distributor.`, 'warning'); return; }
     const address = $('#orderAddress').value.trim();
     if (!address) { toast('Please enter a delivery address.', 'warning'); return; }
+    const phone = digitsOnly($('#orderPhone').value);
+    if (phone.length !== 10) { toast('Please enter a 10-digit mobile number.', 'warning'); return; }
     const btn = $('#confirmOrder');
     btn.disabled = true;
     const geo = await geoQuick();
     const [method, payMode] = $('#orderPay').value.split(':');
-    const res = await post('api/orders.php', { items: [{ medicine_id: m.id, qty }], method, delivery_address: address, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
+    const res = await post('api/orders.php', { items: [{ medicine_id: m.id, qty }], method, delivery_address: address, delivery_phone: phone, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
     if (!res.ok) { toast(res.error, 'danger'); btn.disabled = false; return; }
     cookieSet(DELIVERY_COOKIE, address);
+    cookieSet(DELIVERY_PHONE_COOKIE, phone);
     cacheDrop('api/orders.php');
     bootstrap.Modal.getInstance($('#orderModal')).hide();
     if (method === 'Razorpay') {
@@ -613,6 +627,7 @@
     if (res.ok) {
       toast(`${medName || 'Medicine'} ${window._editMedId ? 'updated' : 'added'}`);
       cacheDrop('api/medicines.php');
+      cacheDrop('api/reports.php');
       bootstrap.Modal.getInstance($('#addMedModal')).hide();
       e.target.reset();
       resetCam();
@@ -713,6 +728,7 @@
       el.addEventListener('click', () => show(el.dataset.page));
     });
     loadNotifCount();
+    setInterval(loadNotifCount, 30000);
     /* warm every tab in parallel so switching feels instant (session lock is released) */
     const PAGE_API = {
       overview: 'api/reports.php', medicines: 'api/medicines.php', orders: 'api/orders.php',

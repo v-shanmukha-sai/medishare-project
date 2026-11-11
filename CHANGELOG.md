@@ -1,4 +1,4 @@
-# MedShare - Change Log
+# MEDRED - Change Log
 
 Records every file creation, edit, and deletion. Append to this file on every change.
 
@@ -611,6 +611,33 @@ Registration now requires identifying credentials per role: distributors supply 
 ### Verified
 - API: unknown email gets a generic response (no account leak), OTP written/verified, wrong/used OTP rejected, reset token updates the password hash, login works with the new password, invalid token and short password rejected, original password restored. All pass.
 - UI (Playwright): login -> Forgot password? -> email -> OTP -> new password -> success message -> login with the new password. No JS errors.
+
+## 2026-11-11 - MEDRED rebrand, delivery phone, persistent login, SMTP OTP, report update
+
+### Added
+- `delivery_phone` on orders - Additive migration `ALTER TABLE orders ADD COLUMN IF NOT EXISTS delivery_phone VARCHAR(15)` applied to the live Supabase database and added to `database.sql`. Checkout and quick order require exactly ten digits and remember the last value in a cookie.
+- `config/db.php` - Thirty-day persistent sign-in using a signed `medred_remember` cookie (HMAC with `RESET_SECRET`, HttpOnly, SameSite=Lax, Secure on HTTPS). `auth/login.php` issues it; `auth/logout.php` clears it; `current_user()` restores the session after the PHP session expires.
+- `auth/forgot.php` - Self-contained SMTP OTP delivery, development log fallback, and a clear production configuration error when SMTP is absent. The Supabase Auth fallback was removed because its magic-link email carries a confirmation link instead of a usable OTP.
+- `reference/report_template.html`, `PROJECT_REPORT.md` - Report updated for MEDRED, deployment, delivery phone, persistent sign-in, SMTP OTP, reject cleanup, report filtering and new test cases; PDF regenerated.
+
+### Edited
+- `reference/report_template.html` and `PROJECT_REPORT.md` - Rebranded to MEDRED with the line "Don't waste medicines, redistribute hope."
+- `index.html` - New hero copy and image; `img/logo.png` used in navigation and as favicon; all page titles rebranded.
+- `js/app.js`, `js/store.js`, `js/cart.js` - Delivery mobile fields, address-first Google Maps navigation, 30-second dashboard badge refresh, cache invalidation for reports/verification/distributors, and MEDRED branding.
+- `api/reports.php` - Active totals, category counts and risk counts filter `deleted = 0`; all-time total remains available.
+- `api/verify.php` - Reject removes the pending user, role profile, notifications and audit rows, and deletes the uploaded document.
+- `api/orders.php` - Validates and stores `delivery_phone` before touching stock.
+- `api/profile.php`, `auth/register.php` - Phone numbers normalised and required to be ten digits.
+- `config/db.php`, `.env.example`, `README.md` - `MEDRED_EMAIL` replaces `MEDISHARE_EMAIL` (old name still accepted as a fallback); OTP temp files and branding updated.
+- `css/style.css`, `dashboard.html`, `delivery-map.html`, `map.html` - Brand logo sizing, hidden initial badge, delivery phone display and address-first directions.
+
+### Verified
+- Reports: active total 3 vs all-time 11; low stock 1; expiring 1; revenue 10484.
+- Verification: rejected test account returned `{"ok":true}` and left zero user rows.
+- Orders: invalid phone returned 422; valid test order stored `9876543210`, cancelled, cleaned up, stock restored.
+- Sessions: remember cookie alone restored the session through `auth/session.php`.
+- OTP: development request wrote the OTP to the temp log; verification returned a 128-character reset token.
+- `php -l` and `node --check` pass on all changed files.
 
 ## Future entries
 

@@ -7,20 +7,20 @@ if ($cached !== null && ($_GET['format'] ?? '') !== 'csv') respond($cached);
 
 $pdo = db();
 $s = $pdo->query("SELECT
-  (SELECT COUNT(*) FROM medicines) AS total,
-  (SELECT COUNT(*) FROM medicines WHERE stock > 0 AND stock < 250) AS low,
-  (SELECT COUNT(*) FROM medicines WHERE expiry BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '3 months') AS expiring,
+  (SELECT COUNT(*) FROM medicines WHERE deleted = 0) AS total,
+  (SELECT COUNT(*) FROM medicines WHERE deleted = 0 AND stock > 0 AND stock < 250) AS low,
+  (SELECT COUNT(*) FROM medicines WHERE deleted = 0 AND expiry BETWEEN CURRENT_DATE AND CURRENT_DATE + INTERVAL '3 months') AS expiring,
   (SELECT COALESCE(SUM(amount),0) FROM transactions WHERE status = 'Completed') AS revenue")->fetch();
 $total = (int)$s['total']; $low = (int)$s['low']; $expiring = (int)$s['expiring']; $revenue = (float)$s['revenue'];
 
 $byCat = [];
-foreach ($pdo->query('SELECT category, SUM(stock) AS s FROM medicines GROUP BY category') as $row) {
+foreach ($pdo->query('SELECT category, SUM(stock) AS s FROM medicines WHERE deleted = 0 GROUP BY category') as $row) {
   $byCat[$row['category']] = (int)$row['s'];
 }
 $risk = $pdo->query('SELECT m.name, u.name AS distributor, m.expiry
                      FROM medicines m JOIN distributors d ON d.id = m.distributor_id
                      JOIN users u ON u.id = d.user_id
-                     WHERE m.expiry BETWEEN CURRENT_DATE AND (CURRENT_DATE + INTERVAL \'3 months\')
+                     WHERE m.deleted = 0 AND m.expiry BETWEEN CURRENT_DATE AND (CURRENT_DATE + INTERVAL \'3 months\')
                      ORDER BY m.expiry')->fetchAll();
 
 if (($_GET['format'] ?? '') === 'csv') {

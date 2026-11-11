@@ -1,4 +1,4 @@
-/* MediShare storefront pages: index / store / medicine / distributor / cart. */
+/* MEDRED storefront pages: index / store / medicine / distributor / cart. */
 (function () {
   const page = location.pathname.split('/').pop();
   const isHome = page === '' || page === 'index.html';
@@ -224,6 +224,7 @@
       return p;
     }
 
+      $('#epPhone')?.addEventListener('input', e => { e.target.value = digitsOnly(e.target.value); });
       $('#editProfileBtn').addEventListener('click', () => {
         if (!prof) return;
         $('#epName').value = prof.name;
@@ -325,6 +326,8 @@
           checkout = `
             <label class="form-label small text-secondary">Delivery Address</label>
             <textarea class="form-control mb-2" id="delAddr" rows="2" placeholder="Delivery address (e.g. Hope Orphanage, Warangal, Telangana)" required></textarea>
+            <label class="form-label small text-secondary">Mobile Number</label>
+            <input type="tel" class="form-control mb-2" id="delPhone" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" required>
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
               <span class="small text-secondary">Delivery location</span>
               <span class="small ${geo ? 'text-success' : 'text-warning'}" id="geoStatus">${geo ? `\u2713 ${geo.lat}, ${geo.lng}` : 'Not enabled'}</span>
@@ -343,6 +346,8 @@
         }
         $('#checkoutBox').innerHTML = checkout;
         if ($('#delAddr')) $('#delAddr').value = savedAddress(user.address);
+        if ($('#delPhone')) $('#delPhone').value = savedPhone(user.phone);
+        $('#delPhone')?.addEventListener('input', e => { e.target.value = digitsOnly(e.target.value); });
         $('#geoEnable')?.addEventListener('click', async () => {
           const btn = $('#geoEnable');
           btn.disabled = true;
@@ -365,6 +370,12 @@
             toast('Please enter a delivery address.', 'warning');
             return;
           }
+          const phone = digitsOnly($('#delPhone').value);
+          if (phone.length !== 10) {
+            $('#orderMsg').innerHTML = '<div class="alert alert-warning small mb-0">Please enter a 10-digit mobile number.</div>';
+            toast('Please enter a 10-digit mobile number.', 'warning');
+            return;
+          }
           const distTotals = {};
           getCart().filter(i => i.qty > 0).forEach(i => {
             const m = meds.find(x => x.id === i.id);
@@ -380,7 +391,7 @@
           btn.disabled = true;
           const geo = await geoQuick();
           const [method, payMode] = $('#payMethod').value.split(':');
-          const res = await apiPost('api/orders.php', { items, method, delivery_address: address, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
+          const res = await apiPost('api/orders.php', { items, method, delivery_address: address, delivery_phone: phone, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
           if (!res.ok) {
             btn.disabled = false;
             $('#orderMsg').innerHTML = `<div class="alert alert-danger small mb-0">${res.error}</div>`;
@@ -389,6 +400,7 @@
           }
 
           cookieSet(DELIVERY_COOKIE, address);
+          cookieSet(DELIVERY_PHONE_COOKIE, phone);
           setCart([]);
           const ids = res.order_ids;
           const idText = `Order${ids.length > 1 ? 's' : ''} #${ids.join(', #')}`;

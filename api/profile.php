@@ -7,14 +7,18 @@ if (!$u) respond(['ok' => false, 'error' => 'Not logged in.'], 401);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $b = body();
   $name = trim($b['name'] ?? '');
-  $phone = trim($b['phone'] ?? '');
+  $phone = preg_replace('/\D/', '', (string)($b['phone'] ?? ''));
   $address = trim($b['address'] ?? '');
   $lat = trim($b['latitude'] ?? '');
   $lng = trim($b['longitude'] ?? '');
   if ($name === '') respond(['ok' => false, 'error' => 'Full name is required.'], 422);
+  if ($phone !== '' && !preg_match('/^\d{10}$/', $phone)) respond(['ok' => false, 'error' => 'Phone must be a 10-digit mobile number.'], 422);
   $st = $pdo->prepare('UPDATE users SET name = ?, phone = ?, address = ?, latitude = ?, longitude = ? WHERE id = ?');
-  $st->execute([$name, $phone, $address, $lat ?: null, $lng ?: null, $u['id']]);
+  $st->execute([$name, $phone ?: null, $address, $lat ?: null, $lng ?: null, $u['id']]);
+  ms_session_start();
   $_SESSION['user']['name'] = $name;
+  $_SESSION['user']['phone'] = $phone ?: null;
+  session_write_close();
   audit_log($pdo, (int)$u['id'], 'Updated profile');
   respond(['ok' => true]);
 }

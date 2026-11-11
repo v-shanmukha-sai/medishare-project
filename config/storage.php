@@ -94,7 +94,7 @@ function storage_signed_url(string $bucket, string $object, int $expires = 3600)
     if (str_starts_with($signed, 'http')) return $signed;
     return rtrim(SUPABASE_URL, '/') . '/storage/v1' . $signed;
   }
-  if ($err) error_log('MediShare storage sign: ' . $err);
+  if ($err) error_log('MEDRED storage sign: ' . $err);
   return null;
 }
 
@@ -130,7 +130,7 @@ function storage_store_file(string $bucket, string $object, string $rel, string 
     [$created] = storage_ensure_bucket($bucket, $public);
     if ($created) [$ok, $error] = storage_upload_object($bucket, $object, $tmp, $mime);
   }
-  if (!$ok) error_log("MediShare storage upload ($bucket/$object): $error");
+  if (!$ok) error_log("MEDRED storage upload ($bucket/$object): $error");
   return $ok
     ? ['path' => $rel, 'error' => null]
     : ['path' => null, 'error' => 'File upload failed. Try again.'];

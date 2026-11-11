@@ -1,5 +1,5 @@
 <?php
-/* MedShare location API - returns verified orgs/distributors with lat/lng for the delivery map. */
+/* MEDRED location API - returns verified orgs/distributors with lat/lng for the delivery map. */
 require __DIR__ . '/../config/db.php';
 current_user() ?? respond(['ok' => false, 'error' => 'Not logged in.'], 401);
 

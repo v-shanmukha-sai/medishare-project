@@ -173,6 +173,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
   if ($delivery === '') respond(['ok' => false, 'error' => 'Delivery address is required. Add one in your profile.'], 422);
 
+  $phone = preg_replace('/\D/', '', (string)($d['delivery_phone'] ?? ''));
+  if (!preg_match('/^\d{10}$/', $phone)) respond(['ok' => false, 'error' => 'Enter a valid 10-digit mobile number for delivery.'], 422);
+
   $lat = trim($d['latitude'] ?? '');
   $lng = trim($d['longitude'] ?? '');
 
@@ -215,8 +218,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       foreach ($list as [$med, $qty]) $total += $med['price'] * $qty;
       if ($total < 500) throw new Exception('Minimum order is ₹500 per distributor. Please add more medicines from this distributor.');
       $status = $method === 'Razorpay' ? 'Pending Payment' : 'Pending';
-      $pdo->prepare('INSERT INTO orders (org_user_id, distributor_id, delivery_address, latitude, longitude, total, status) VALUES (?,?,?,?,?,?,?)')
-          ->execute([$u['id'], $distId, $delivery, $lat ?: null, $lng ?: null, $total, $status]);
+      $pdo->prepare('INSERT INTO orders (org_user_id, distributor_id, delivery_address, delivery_phone, latitude, longitude, total, status) VALUES (?,?,?,?,?,?,?,?)')
+          ->execute([$u['id'], $distId, $delivery, $phone, $lat ?: null, $lng ?: null, $total, $status]);
       $orderId = (int)$pdo->lastInsertId();
       foreach ($list as [$med, $qty]) {
         $pdo->prepare('INSERT INTO order_items (order_id, medicine_id, qty, price) VALUES (?,?,?,?)')

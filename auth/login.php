@@ -1,13 +1,13 @@
 <?php
 require __DIR__ . '/../config/db.php';
 
-if (session_status() === PHP_SESSION_NONE) session_start();
+ms_session_start();
 
 $d = body();
 $email = strtolower(trim($d['email'] ?? ''));
 $password = $d['password'] ?? '';
 
-$st = db()->prepare('SELECT id, name, email, password, role, org_type, verified, address FROM users WHERE email = ?');
+$st = db()->prepare('SELECT id, name, email, password, role, org_type, verified, address, phone FROM users WHERE email = ?');
 $st->execute([$email]);
 $user = $st->fetch();
 
@@ -26,6 +26,8 @@ $_SESSION['user'] = [
   'role' => $user['role'],
   'org_type' => $user['org_type'],
   'address' => $user['address'],
+  'phone' => $user['phone'],
 ];
+remember_login($user);
 audit_log(db(), (int)$user['id'], 'Logged in');
 respond(['ok' => true, 'user' => $_SESSION['user']]);

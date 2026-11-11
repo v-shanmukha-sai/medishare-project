@@ -7,7 +7,7 @@ try {
   db()->query('SELECT 1');
   $ok = true;
 } catch (Throwable $e) {
-  error_log('MediShare health check: ' . $e->getMessage());
+    error_log('MEDRED health check: ' . $e->getMessage());
 }
 
 http_response_code($ok ? 200 : 503);

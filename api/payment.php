@@ -1,5 +1,5 @@
 <?php
-/* MedShare payments: Razorpay online payments + manual confirmation (cash/bank). */
+/* MEDRED payments: Razorpay online payments + manual confirmation (cash/bank). */
 require __DIR__ . '/../config/db.php';
 $u = current_user();
 if (!$u) respond(['ok' => false, 'error' => 'Not logged in.'], 401);

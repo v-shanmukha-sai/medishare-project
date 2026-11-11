@@ -1,4 +1,4 @@
-/* MediShare storefront shared: cart storage + navbar + footer. */
+/* MEDRED storefront shared: cart storage + navbar + footer. */
 const CART_KEY = 'medshare_cart';
 const getCart = () => JSON.parse(localStorage.getItem(CART_KEY) || '[]').map(i => ({ id: +i.id, qty: +i.qty }));
 const setCart = c => { localStorage.setItem(CART_KEY, JSON.stringify(c)); window.dispatchEvent(new Event('cart')); };
@@ -25,6 +25,7 @@ const apiPost = async (url, body, multipart = false) => (await fetch(url, multip
 
 /* ---------- delivery address cookie (remembered across visits) ---------- */
 const DELIVERY_COOKIE = 'medshare_delivery';
+const DELIVERY_PHONE_COOKIE = 'medshare_delivery_phone';
 const cookieGet = name => {
   const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.*+?^${}()|[\]\\])/g, '\\$1') + '=([^;]*)'));
   return m ? decodeURIComponent(m[1]) : '';
@@ -33,6 +34,8 @@ const cookieSet = (name, value, days = 365) => {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${days * 86400}; SameSite=Lax`;
 };
 const savedAddress = fallback => cookieGet(DELIVERY_COOKIE) || fallback || '';
+const savedPhone = fallback => cookieGet(DELIVERY_PHONE_COOKIE) || fallback || '';
+const digitsOnly = value => String(value).replace(/\D/g, '').slice(0, 10);
 
 /* ---------- small shared helpers ---------- */
 const loadScript = src => new Promise((res, rej) => {
@@ -65,7 +68,7 @@ async function payWithRazorpay(orderIds, user, upi = false) {
         order_id: create.razorpay_order_id,
         amount: create.amount,
         currency: 'INR',
-        name: 'MediShare',
+        name: 'MEDRED',
         description: 'Order' + (orderIds.length > 1 ? 's' : '') + ' #' + orderIds.join(', #'),
         prefill: { name: user?.name || '', email: user?.email || '', ...(upi ? { method: 'upi' } : {}) },
         theme: { color: '#0B5C4E' },
@@ -188,13 +191,18 @@ function initMiniCart(user) {
 async function renderNav() {
   const nav = document.getElementById('nav');
   if (!nav) return;
+  if (!document.querySelector('link[rel="icon"]')) {
+    const icon = document.createElement('link');
+    icon.rel = 'icon'; icon.type = 'image/png'; icon.href = 'img/logo.png';
+    document.head.appendChild(icon);
+  }
   const user = await loadSession();
   document.body.classList.toggle('is-distributor', user?.role === 'distributor');
   initMiniCart(user);
   nav.innerHTML = `
   <nav class="site-nav">
     <div class="container">
-      <a class="brand" href="index.html"><span class="brand-mark">+</span> MediShare</a>
+      <a class="brand" href="index.html"><img src="img/logo.png" alt="" class="brand-logo"> MEDRED</a>
       <ul class="nav-links d-none d-lg-flex">
         <li><a href="store.html">Medicines</a></li>
         <li><a href="index.html#how">How it works</a></li>
@@ -235,8 +243,8 @@ async function renderFooter() {
     <div class="container">
       <div class="row g-4">
         <div class="col-md-4">
-          <div class="footer-brand">MediShare</div>
-          <p class="footer-desc mb-0">Redistributing near-expiry, safe medicines to NGOs, orphanages and old-age homes.</p>
+          <div class="footer-brand">MEDRED</div>
+          <p class="footer-desc mb-0">Don't waste medicines, redistribute hope. Near-expiry, safe medicines for NGOs, orphanages and old-age homes.</p>
         </div>
         <div class="col-md-4">
           <ul class="footer-links">

@@ -10,18 +10,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!in_array($action, ['approve', 'reject'], true) || !$userId) {
     respond(['ok' => false, 'error' => 'Invalid request.'], 422);
   }
-  $verified = $action === 'approve' ? 1 : 0;
+  $st = $pdo->prepare("SELECT u.id, u.name, u.role, u.verified,
+                              COALESCE(d.license_image, n.license_image) AS license_image
+                       FROM users u
+                       LEFT JOIN distributors d ON d.user_id = u.id
+                       LEFT JOIN ngos n ON n.user_id = u.id
+                       WHERE u.id = ? AND u.role <> 'admin'");
+  $st->execute([$userId]);
+  $account = $st->fetch();
+  if (!$account) respond(['ok' => false, 'error' => 'Account not found.'], 404);
+  if ((int)$account['verified'] !== 0) respond(['ok' => false, 'error' => 'This account is already verified.'], 409);
+
   $pdo->beginTransaction();
   try {
-    $pdo->prepare('UPDATE users SET verified = ? WHERE id = ?')->execute([$verified, $userId]);
-    $pdo->prepare('UPDATE distributors SET verified = ? WHERE user_id = ?')->execute([$verified, $userId]);
-    $pdo->prepare('UPDATE ngos SET verified = ? WHERE user_id = ?')->execute([$verified, $userId]);
-    $msg = $action === 'approve' ? 'Your account was approved. You can now log in.' : 'Your account was rejected. Contact admin.';
-    notify($pdo, $userId, 'verify', $msg);
-    $st = $pdo->prepare('SELECT name FROM users WHERE id = ?');
-    $st->execute([$userId]);
-    audit_log($pdo, $_SESSION['user']['id'], ucfirst($action) . 'd account: ' . $st->fetchColumn());
+    if ($action === 'approve') {
+      $pdo->prepare('UPDATE users SET verified = 1 WHERE id = ?')->execute([$userId]);
+      $pdo->prepare('UPDATE distributors SET verified = 1 WHERE user_id = ?')->execute([$userId]);
+      $pdo->prepare('UPDATE ngos SET verified = 1 WHERE user_id = ?')->execute([$userId]);
+      notify($pdo, $userId, 'verify', 'Your account was approved. You can now log in.');
+    } else {
+      /* reject = remove the pending registration completely, so it leaves the
+         verification list and the email can be used to register again. */
+      $pdo->prepare('DELETE FROM notifications WHERE user_id = ?')->execute([$userId]);
+      $pdo->prepare('DELETE FROM audit_logs WHERE user_id = ?')->execute([$userId]);
+      $pdo->prepare('DELETE FROM distributors WHERE user_id = ?')->execute([$userId]);
+      $pdo->prepare('DELETE FROM ngos WHERE user_id = ?')->execute([$userId]);
+      $pdo->prepare('DELETE FROM users WHERE id = ?')->execute([$userId]);
+    }
+    audit_log($pdo, (int)$_SESSION['user']['id'], ucfirst($action) . 'd account: ' . $account['name']);
     $pdo->commit();
+    if ($action === 'reject') storage_delete_upload($account['license_image'], $account['role']);
     respond(['ok' => true]);
   } catch (Exception $e) {
     $pdo->rollBack();
