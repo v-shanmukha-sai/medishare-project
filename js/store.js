@@ -388,12 +388,15 @@
             toast(msg, 'warning');
             return;
           }
+          const btnLabel = btn.innerHTML;
           btn.disabled = true;
-          const geo = await geoQuick();
+          btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Placing order…';
+          const geo = geoFresh();
           const [method, payMode] = $('#payMethod').value.split(':');
           const res = await apiPost('api/orders.php', { items, method, delivery_address: address, delivery_phone: phone, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
           if (!res.ok) {
             btn.disabled = false;
+            btn.innerHTML = btnLabel;
             $('#orderMsg').innerHTML = `<div class="alert alert-danger small mb-0">${res.error}</div>`;
             toast(res.error, 'danger');
             return;
@@ -406,9 +409,11 @@
           const idText = `Order${ids.length > 1 ? 's' : ''} #${ids.join(', #')}`;
 
           if (method === 'Razorpay') {
-            $('#orderMsg').innerHTML = `<div class="alert alert-info small mb-0">${idText} placed. Complete the payment to confirm it.</div>`;
+            $('#orderMsg').innerHTML = `<div class="alert alert-info small mb-0">${idText} placed. Opening Razorpay checkout…</div>`;
             const paid = await payWithRazorpay(ids, user, payMode === 'upi');
             if (!paid) {
+              btn.disabled = false;
+              btn.innerHTML = btnLabel;
               $('#orderMsg').innerHTML = `<div class="alert alert-warning small mb-0">${idText} placed, but payment is pending. You can pay from the dashboard Orders tab.</div>`;
               toast('Payment pending. Pay any time from Orders.', 'warning');
               return;

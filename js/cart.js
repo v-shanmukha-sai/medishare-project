@@ -38,13 +38,16 @@ const savedPhone = fallback => cookieGet(DELIVERY_PHONE_COOKIE) || fallback || '
 const digitsOnly = value => String(value).replace(/\D/g, '').slice(0, 10);
 
 /* ---------- small shared helpers ---------- */
-const loadScript = src => new Promise((res, rej) => {
-  const s = document.createElement('script');
-  s.src = src;
-  s.onload = res;
-  s.onerror = () => rej(new Error('Could not load ' + src));
-  document.head.appendChild(s);
-});
+  const loadScript = src => new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = res;
+    s.onerror = () => rej(new Error('Could not load ' + src));
+    document.head.appendChild(s);
+  });
+  let razorpayLoader = null;
+  const loadRazorpay = () => razorpayLoader || (razorpayLoader = loadScript('https://checkout.razorpay.com/v1/checkout.js')
+    .catch(err => { razorpayLoader = null; throw err; }));
 const cachedGet = async (url, ttl = 60000) => {
   const key = 'medshare_cache:' + url;
   try { const c = JSON.parse(sessionStorage.getItem(key) || 'null'); if (c && Date.now() - c.at < ttl) return c.data; } catch {}
@@ -54,11 +57,13 @@ const cachedGet = async (url, ttl = 60000) => {
 };
 
 /* ---------- Razorpay checkout (Amazon-style: order first, then pay) ---------- */
-async function payWithRazorpay(orderIds, user, upi = false) {
-  const create = await apiPost('api/payment.php', { action: 'create', order_ids: orderIds });
-  if (!create.ok) { toast(create.error, 'danger'); return false; }
-  try { await loadScript('https://checkout.razorpay.com/v1/checkout.js'); }
-  catch { toast('Payment gateway could not load. Check your connection.', 'danger'); return false; }
+  async function payWithRazorpay(orderIds, user, upi = false) {
+    /* start loading the checkout while the server creates the payment order */
+    const scriptPromise = loadRazorpay();
+    const create = await apiPost('api/payment.php', { action: 'create', order_ids: orderIds });
+    if (!create.ok) { toast(create.error, 'danger'); return false; }
+    try { await scriptPromise; }
+    catch { toast('Payment gateway could not load. Check your connection.', 'danger'); return false; }
   return new Promise(resolve => {
     let finished = false;
     let rz;

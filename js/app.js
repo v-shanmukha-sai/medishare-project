@@ -590,16 +590,21 @@
     const phone = digitsOnly($('#orderPhone').value);
     if (phone.length !== 10) { toast('Please enter a 10-digit mobile number.', 'warning'); return; }
     const btn = $('#confirmOrder');
+    const btnLabel = btn.innerHTML;
     btn.disabled = true;
-    const geo = await geoQuick();
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Placing order…';
+    const geo = geoFresh();
     const [method, payMode] = $('#orderPay').value.split(':');
     const res = await post('api/orders.php', { items: [{ medicine_id: m.id, qty }], method, delivery_address: address, delivery_phone: phone, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
-    if (!res.ok) { toast(res.error, 'danger'); btn.disabled = false; return; }
+    if (!res.ok) { toast(res.error, 'danger'); btn.disabled = false; btn.innerHTML = btnLabel; return; }
     cookieSet(DELIVERY_COOKIE, address);
     cookieSet(DELIVERY_PHONE_COOKIE, phone);
     cacheDrop('api/orders.php');
+    btn.disabled = false;
+    btn.innerHTML = btnLabel;
     bootstrap.Modal.getInstance($('#orderModal')).hide();
     if (method === 'Razorpay') {
+      toast('Opening Razorpay checkout…');
       const paid = await payWithRazorpay(res.order_ids, user, payMode === 'upi');
       if (!paid) toast('Payment pending. Pay any time from Orders.', 'warning');
     } else {
