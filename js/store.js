@@ -393,6 +393,8 @@
           btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Placing order…';
           const geo = geoFresh();
           const [method, payMode] = $('#payMethod').value.split(':');
+          /* start the checkout download while the order is being created */
+          if (method === 'Razorpay') loadRazorpay().catch(() => {});
           const res = await apiPost('api/orders.php', { items, method, delivery_address: address, delivery_phone: phone, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
           if (!res.ok) {
             btn.disabled = false;
@@ -409,8 +411,15 @@
           const idText = `Order${ids.length > 1 ? 's' : ''} #${ids.join(', #')}`;
 
           if (method === 'Razorpay') {
-            $('#orderMsg').innerHTML = `<div class="alert alert-info small mb-0">${idText} placed. Opening Razorpay checkout…</div>`;
-            const paid = await payWithRazorpay(ids, user, payMode === 'upi');
+            if (res.payment_error) {
+              btn.disabled = false;
+              btn.innerHTML = btnLabel;
+              $('#orderMsg').innerHTML = `<div class="alert alert-warning small mb-0">${idText} placed, but the payment gateway is unavailable. Pay from the dashboard Orders tab.</div>`;
+              toast('Payment gateway unavailable. Pay from Orders.', 'warning');
+              return;
+            }
+            $('#orderMsg').innerHTML = `<div class="alert alert-info small mb-0">${idText} placed. Opening Razorpay checkout...</div>`;
+            const paid = await payWithRazorpay(ids, user, payMode === 'upi', res.payment);
             if (!paid) {
               btn.disabled = false;
               btn.innerHTML = btnLabel;

@@ -57,10 +57,10 @@ const cachedGet = async (url, ttl = 60000) => {
 };
 
 /* ---------- Razorpay checkout (Amazon-style: order first, then pay) ---------- */
-  async function payWithRazorpay(orderIds, user, upi = false) {
-    /* start loading the checkout while the server creates the payment order */
+  async function payWithRazorpay(orderIds, user, upi = false, payment = null) {
+    /* order placement may already return the Razorpay order; otherwise create it */
     const scriptPromise = loadRazorpay();
-    const create = await apiPost('api/payment.php', { action: 'create', order_ids: orderIds });
+    const create = payment || await apiPost('api/payment.php', { action: 'create', order_ids: orderIds });
     if (!create.ok) { toast(create.error, 'danger'); return false; }
     try { await scriptPromise; }
     catch { toast('Payment gateway could not load. Check your connection.', 'danger'); return false; }

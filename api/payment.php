@@ -1,32 +1,13 @@
 <?php
 /* MEDRED payments: Razorpay online payments + manual confirmation (cash/bank). */
 require __DIR__ . '/../config/db.php';
+require __DIR__ . '/../config/payments.php';
 $u = current_user();
 if (!$u) respond(['ok' => false, 'error' => 'Not logged in.'], 401);
 
 $d = body();
 $action = $d['action'] ?? 'confirm';
 $pdo = db();
-
-/* minimal Razorpay REST client (Basic auth, JSON) */
-function rzp_request(string $method, string $path, array $data = []): array {
-  $ch = curl_init('https://api.razorpay.com/v1/' . $path);
-  $opts = [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_USERPWD => RAZORPAY_KEY_ID . ':' . RAZORPAY_KEY_SECRET,
-    CURLOPT_HTTPHEADER => ['Content-Type: application/json'],
-    CURLOPT_TIMEOUT => 20,
-  ];
-  if ($method === 'POST') { $opts[CURLOPT_POST] = true; $opts[CURLOPT_POSTFIELDS] = json_encode($data); }
-  curl_setopt_array($ch, $opts);
-  $res = curl_exec($ch);
-  $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  curl_close($ch);
-  if ($res === false) return ['ok' => false, 'error' => 'Payment gateway unreachable. Try again.'];
-  $json = json_decode($res, true);
-  if ($code >= 400) return ['ok' => false, 'error' => $json['error']['description'] ?? 'Payment gateway error.'];
-  return ['ok' => true, 'data' => $json];
-}
 
 /* buyer starts an online payment for one or more unpaid orders */
 if ($action === 'create') {
@@ -49,24 +30,12 @@ if ($action === 'create') {
     $total += (float)$r['total'];
   }
 
-  $rzp = rzp_request('POST', 'orders', [
-    'amount' => (int)round($total * 100),
-    'currency' => 'INR',
-    'receipt' => 'ms_' . $ids[0] . '_' . time(),
-    'notes' => ['order_ids' => implode(',', $ids)],
-  ]);
+  $rzp = rzp_create_order($ids, $total);
   if (!$rzp['ok']) respond(['ok' => false, 'error' => $rzp['error']], 502);
 
-  $rzpOrderId = $rzp['data']['id'];
   $pdo->prepare("UPDATE transactions SET reference = ? WHERE order_id IN ($in) AND status = 'Pending'")
-      ->execute([$rzpOrderId, ...$ids]);
-  respond([
-    'ok' => true,
-    'key_id' => RAZORPAY_KEY_ID,
-    'razorpay_order_id' => $rzpOrderId,
-    'amount' => (int)round($total * 100),
-    'total' => $total,
-  ]);
+      ->execute([$rzp['razorpay_order_id'], ...$ids]);
+  respond($rzp);
 }
 
 /* buyer returns from Razorpay Checkout: verify the signature server-side */

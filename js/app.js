@@ -303,12 +303,24 @@
     if (body) body.innerHTML = rows || '<tr><td colspan="10" class="text-secondary">No orders yet.</td></tr>';
   }
 
-  function setOrderStatus(id, status, tracking) {
+  function orderSnapshot(id) {
     const o = (window._ordersData || []).find(x => x.id === id);
-    if (o) {
-      o.status = status;
-      if (tracking !== undefined) o.tracking_number = tracking || null;
-    }
+    return o ? { ...o } : null;
+  }
+
+  function orderPatch(id, patch) {
+    const o = (window._ordersData || []).find(x => x.id === id);
+    if (!o) return;
+    Object.assign(o, patch);
+    cachePut('api/orders.php', { orders: window._ordersData });
+    renderOrderRows();
+  }
+
+  function orderRestore(id, prev) {
+    if (!prev) return;
+    const o = (window._ordersData || []).find(x => x.id === id);
+    if (!o) return;
+    Object.assign(o, prev);
     cachePut('api/orders.php', { orders: window._ordersData });
     renderOrderRows();
   }
@@ -442,33 +454,53 @@
     const delMedBtn = e.target.closest('.btn-del-med');
     if (delMedBtn) {
       if (!confirm(`Remove ${delMedBtn.dataset.name} from the store?`)) return;
-      delMedBtn.disabled = true;
+      const id = +delMedBtn.dataset.id;
+      const list = window._medsData || [];
+      const idx = list.findIndex(x => x.id === id);
+      const removed = idx >= 0 ? list.splice(idx, 1)[0] : null;
+      renderMedTable();
+      toast('Medicine removed');
       const fd = new FormData();
       fd.append('action', 'delete');
       fd.append('id', delMedBtn.dataset.id);
       const res = await (await fetch('api/medicines.php', { method: 'POST', body: fd })).json();
-      if (res.ok) { toast('Medicine removed'); cacheDrop('api/medicines.php'); cacheDrop('api/reports.php'); renderMedTable(); }
-      else { toast(res.error, 'danger'); delMedBtn.disabled = false; }
+      if (res.ok) { cacheDrop('api/medicines.php'); cacheDrop('api/reports.php'); }
+      else {
+        if (removed) { list.splice(idx, 0, removed); renderMedTable(); }
+        delMedBtn.disabled = false;
+        toast(res.error, 'danger');
+      }
     }
     const vBtn = e.target.closest('.btn-verify');
     if (vBtn) {
-      if (vBtn.dataset.action === 'reject' && !confirm('Reject and remove this registration? The user will have to register again.')) return;
-      vBtn.disabled = true;
-      const res = await post('api/verify.php', { user_id: +vBtn.dataset.id, action: vBtn.dataset.action });
+      const action = vBtn.dataset.action;
+      if (action === 'reject' && !confirm('Reject and remove this registration? The user will have to register again.')) return;
+      const row = vBtn.closest('tr');
+      if (row) row.style.display = 'none';
+      toast(action === 'approve' ? 'Account approved' : 'Account rejected');
+      const res = await post('api/verify.php', { user_id: +vBtn.dataset.id, action });
       if (res.ok) {
         cacheDrop('api/verify.php');
         cacheDrop('api/distributors.php');
-        toast(vBtn.dataset.action === 'approve' ? 'Account approved' : 'Account rejected');
-        show($('#pageTitle').textContent === 'Distributors' ? 'distributors' : 'verify');
-      } else { toast(res.error, 'danger'); vBtn.disabled = false; }
+      } else {
+        if (row) row.style.display = '';
+        vBtn.disabled = false;
+        toast(res.error, 'danger');
+      }
     }
     const rmvBtn = e.target.closest('.btn-remove');
     if (rmvBtn) {
       const name = rmvBtn.closest('tr').children[0].textContent;
       if (!confirm(`Remove distributor "${name}"? This cannot be undone.`)) return;
-      rmvBtn.disabled = true;
+      const row = rmvBtn.closest('tr');
+      if (row) row.style.display = 'none';
+      toast('Distributor removed');
       const res = await post('api/distributors.php', { user_id: +rmvBtn.dataset.id, action: 'remove' });
-      if (res.ok) { toast('Distributor removed'); show('distributors'); } else { toast(res.error, 'danger'); rmvBtn.disabled = false; }
+      if (!res.ok) {
+        if (row) row.style.display = '';
+        rmvBtn.disabled = false;
+        toast(res.error, 'danger');
+      }
     }
     const revBtn = e.target.closest('.btn-review');
     if (revBtn) {
@@ -481,34 +513,44 @@
     }
     const acBtn = e.target.closest('.btn-accept');
     if (acBtn) {
-      acBtn.disabled = true;
-      const res = await post('api/orders.php', { action: 'accept', order_id: +acBtn.dataset.id });
-      if (res.ok) { toast('Order accepted'); setOrderStatus(+acBtn.dataset.id, res.status); } else { toast(res.error, 'danger'); acBtn.disabled = false; }
+      const id = +acBtn.dataset.id, prev = orderSnapshot(id);
+      orderPatch(id, { status: 'Accepted' });
+      toast('Order accepted');
+      const res = await post('api/orders.php', { action: 'accept', order_id: id });
+      if (!res.ok) { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const rjBtn = e.target.closest('.btn-reject');
     if (rjBtn) {
       if (!confirm('Reject this order? The reserved stock will be restored.')) return;
-      rjBtn.disabled = true;
-      const res = await post('api/orders.php', { action: 'reject', order_id: +rjBtn.dataset.id });
-      if (res.ok) { toast('Order rejected, stock restored'); setOrderStatus(+rjBtn.dataset.id, 'Cancelled'); } else { toast(res.error, 'danger'); rjBtn.disabled = false; }
+      const id = +rjBtn.dataset.id, prev = orderSnapshot(id);
+      orderPatch(id, { status: 'Cancelled' });
+      toast('Order rejected, stock restored');
+      const res = await post('api/orders.php', { action: 'reject', order_id: id });
+      if (!res.ok) { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const pkBtn = e.target.closest('.btn-pack');
     if (pkBtn) {
-      pkBtn.disabled = true;
-      const res = await post('api/orders.php', { action: 'pack', order_id: +pkBtn.dataset.id });
-      if (res.ok) { toast('Order packed'); setOrderStatus(+pkBtn.dataset.id, res.status); } else { toast(res.error, 'danger'); pkBtn.disabled = false; }
+      const id = +pkBtn.dataset.id, prev = orderSnapshot(id);
+      orderPatch(id, { status: 'Packed' });
+      toast('Order packed');
+      const res = await post('api/orders.php', { action: 'pack', order_id: id });
+      if (!res.ok) { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const shBtn = e.target.closest('.btn-ship');
     if (shBtn) {
-      shBtn.disabled = true;
-      const res = await post('api/orders.php', { action: 'ship', order_id: +shBtn.dataset.id });
-      if (res.ok) { toast('Order shipped'); setOrderStatus(+shBtn.dataset.id, res.status); } else { toast(res.error, 'danger'); shBtn.disabled = false; }
+      const id = +shBtn.dataset.id, prev = orderSnapshot(id);
+      orderPatch(id, { status: 'Shipped' });
+      toast('Order shipped');
+      const res = await post('api/orders.php', { action: 'ship', order_id: id });
+      if (!res.ok) { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const ofdBtn = e.target.closest('.btn-ofd');
     if (ofdBtn) {
-      ofdBtn.disabled = true;
-      const res = await post('api/orders.php', { action: 'out_for_delivery', order_id: +ofdBtn.dataset.id });
-      if (res.ok) { toast('Out for delivery'); setOrderStatus(+ofdBtn.dataset.id, res.status); } else { toast(res.error, 'danger'); ofdBtn.disabled = false; }
+      const id = +ofdBtn.dataset.id, prev = orderSnapshot(id);
+      orderPatch(id, { status: 'Out for Delivery' });
+      toast('Out for delivery');
+      const res = await post('api/orders.php', { action: 'out_for_delivery', order_id: id });
+      if (!res.ok) { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const trkBtn = e.target.closest('.btn-track');
     if (trkBtn) {
@@ -524,29 +566,21 @@
     const payBtn = e.target.closest('.btn-pay');
     if (payBtn) {
       if (!confirm(`Confirm payment of ${money(payBtn.dataset.amt)} via ${payBtn.dataset.meth} for order #${payBtn.dataset.id}?`)) return;
-      payBtn.disabled = true;
-      const res = await post('api/payment.php', { order_id: +payBtn.dataset.id, status: 'Completed' });
-      if (res.ok) {
-        toast('Payment confirmed');
-        cacheDrop('api/reports.php');
-        const o = (window._ordersData || []).find(x => x.id === +payBtn.dataset.id);
-        if (o) o.payment_status = 'Completed';
-        cachePut('api/orders.php', { orders: window._ordersData });
-        renderOrderRows();
-      } else { toast(res.error, 'danger'); payBtn.disabled = false; }
+      const id = +payBtn.dataset.id, prev = orderSnapshot(id);
+      orderPatch(id, { payment_status: 'Completed' });
+      toast('Payment confirmed');
+      const res = await post('api/payment.php', { order_id: id, status: 'Completed' });
+      if (res.ok) cacheDrop('api/reports.php');
+      else { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const cancelBtn = e.target.closest('.btn-cancel');
     if (cancelBtn) {
       if (!confirm(`Cancel order #${cancelBtn.dataset.id}?`)) return;
-      cancelBtn.disabled = true;
-      const res = await post('api/orders.php', { action: 'cancel', order_id: +cancelBtn.dataset.id });
-      if (res.ok) {
-        toast('Order cancelled');
-        const o = (window._ordersData || []).find(x => x.id === +cancelBtn.dataset.id);
-        if (o) { o.status = 'Cancelled'; o.payment_status = 'Cancelled'; }
-        cachePut('api/orders.php', { orders: window._ordersData });
-        renderOrderRows();
-      } else { toast(res.error, 'danger'); cancelBtn.disabled = false; }
+      const id = +cancelBtn.dataset.id, prev = orderSnapshot(id);
+      orderPatch(id, { status: 'Cancelled', payment_status: 'Cancelled' });
+      toast('Order cancelled');
+      const res = await post('api/orders.php', { action: 'cancel', order_id: id });
+      if (!res.ok) { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const paynowBtn = e.target.closest('.btn-paynow');
     if (paynowBtn) {
@@ -561,10 +595,12 @@
     }
     const delBtn = e.target.closest('.btn-deliver');
     if (delBtn) {
-      const tracking = $(`#track${delBtn.dataset.id}`)?.value?.trim();
-      delBtn.disabled = true;
-      const res = await post('api/orders.php', { action: 'deliver', order_id: +delBtn.dataset.id, tracking_number: tracking });
-      if (res.ok) { toast('Order marked delivered'); setOrderStatus(+delBtn.dataset.id, res.status, tracking); } else { toast(res.error, 'danger'); delBtn.disabled = false; }
+      const id = +delBtn.dataset.id, tracking = $(`#track${id}`)?.value?.trim();
+      const prev = orderSnapshot(id);
+      orderPatch(id, { status: 'Delivered', tracking_number: tracking || null });
+      toast('Order marked delivered');
+      const res = await post('api/orders.php', { action: 'deliver', order_id: id, tracking_number: tracking });
+      if (!res.ok) { orderRestore(id, prev); toast(res.error, 'danger'); }
     }
     const mapBtn = e.target.closest('.btn-map');
     if (mapBtn) {
@@ -595,6 +631,7 @@
     btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Placing order…';
     const geo = geoFresh();
     const [method, payMode] = $('#orderPay').value.split(':');
+    if (method === 'Razorpay') loadRazorpay().catch(() => {});
     const res = await post('api/orders.php', { items: [{ medicine_id: m.id, qty }], method, delivery_address: address, delivery_phone: phone, latitude: geo?.lat ?? null, longitude: geo?.lng ?? null });
     if (!res.ok) { toast(res.error, 'danger'); btn.disabled = false; btn.innerHTML = btnLabel; return; }
     cookieSet(DELIVERY_COOKIE, address);
@@ -604,8 +641,13 @@
     btn.innerHTML = btnLabel;
     bootstrap.Modal.getInstance($('#orderModal')).hide();
     if (method === 'Razorpay') {
-      toast('Opening Razorpay checkout…');
-      const paid = await payWithRazorpay(res.order_ids, user, payMode === 'upi');
+      if (res.payment_error) {
+        toast('Payment gateway unavailable. Pay from Orders.', 'warning');
+        show('orders');
+        return;
+      }
+      toast('Opening Razorpay checkout...');
+      const paid = await payWithRazorpay(res.order_ids, user, payMode === 'upi', res.payment);
       if (!paid) toast('Payment pending. Pay any time from Orders.', 'warning');
     } else {
       toast('Order placed');

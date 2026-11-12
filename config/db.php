@@ -153,9 +153,21 @@ function db(): PDO {
 }
 
 function respond(array $data, int $code = 200): void {
+  if ($code >= 400) $GLOBALS['MEDRED_MAIL_QUEUE'] = [];
   http_response_code($code);
   header('Content-Type: application/json');
-  echo json_encode($data);
+  $json = json_encode($data);
+  header('Content-Length: ' . strlen($json));
+  if (session_status() === PHP_SESSION_ACTIVE) session_write_close();
+  echo $json;
+  /* send the JSON now; queued notification emails run during shutdown */
+  ignore_user_abort(true);
+  if (function_exists('fastcgi_finish_request')) {
+    fastcgi_finish_request();
+  } else {
+    while (ob_get_level() > 0) @ob_end_flush();
+    @flush();
+  }
   exit;
 }
 
@@ -186,11 +198,32 @@ function cache_put(string $key, array $data): void {
 function cache_clear(): void {
   foreach (glob(sys_get_temp_dir() . '/medshare_cache/*/*.json') ?: [] as $f) @unlink($f);
 }
+if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') cache_clear();
 
 function audit_log(PDO $pdo, ?int $userId, string $action): void {
   $st = $pdo->prepare('INSERT INTO audit_logs (user_id, action) VALUES (?, ?)');
   $st->execute([$userId ?? 0, $action]);
 }
+
+/* Notification email is queued and sent after the JSON response is flushed,
+   so SMTP latency never blocks order/payment/status actions. */
+$GLOBALS['MEDRED_MAIL_QUEUE'] = $GLOBALS['MEDRED_MAIL_QUEUE'] ?? [];
+function queue_mail(string $to, string $subject, string $body): void {
+  $GLOBALS['MEDRED_MAIL_QUEUE'][] = [$to, $subject, $body];
+}
+
+function flush_mail_queue(): void {
+  $queue = $GLOBALS['MEDRED_MAIL_QUEUE'] ?? [];
+  $GLOBALS['MEDRED_MAIL_QUEUE'] = [];
+  foreach ($queue as [$to, $subject, $body]) {
+    $headers = "From: " . SMTP_FROM . "\r\n";
+    $sent = SMTP_HOST !== ''
+      ? smtp_send($to, $subject, $body)
+      : @mail($to, $subject, $body, $headers);
+    if (!$sent) error_log("MEDRED: could not send email to $to");
+  }
+}
+register_shutdown_function('flush_mail_queue');
 
 /* Minimal SMTP sender over cURL. Used only when MEDRED_EMAIL is true and
    SMTP_HOST is set; otherwise falls back to PHP mail(). */
@@ -221,7 +254,8 @@ function smtp_send(string $to, string $subject, string $body): bool {
     CURLOPT_UPLOAD => true,
     CURLOPT_INFILE => $fp,
     CURLOPT_INFILESIZE => strlen($message),
-    CURLOPT_TIMEOUT => 15,
+    CURLOPT_CONNECTTIMEOUT => 3,
+    CURLOPT_TIMEOUT => 5,
   ]);
   $ok = curl_exec($ch) !== false;
   if (!$ok) error_log('MEDRED SMTP: ' . curl_error($ch));
@@ -245,14 +279,8 @@ function notify(PDO $pdo, int $userId, string $type, string $text): void {
   if (!$user) return;
 
   if (MEDRED_EMAIL) {
-    $to = $user['email'];
-    $subject = 'MEDRED - ' . ucfirst($type);
-    $body = "Hello {$user['name']},\n\n$text\n\n-- MEDRED Team";
-    $headers = "From: " . SMTP_FROM . "\r\n";
-    $sent = SMTP_HOST !== ''
-      ? smtp_send($to, $subject, $body)
-      : @mail($to, $subject, $body, $headers);
-    if (!$sent) error_log("MEDRED: could not send email to $to");
+    queue_mail($user['email'], 'MEDRED - ' . ucfirst($type),
+      "Hello {$user['name']},\n\n$text\n\n-- MEDRED Team");
   }
 
   if ($user['phone']) {
